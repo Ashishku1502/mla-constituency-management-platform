@@ -1,0 +1,331 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Authentication & User Roles ───────────────────────────────────────────────
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  mobile       String        @unique
+  passwordHash String
+  status       String        @default("Pending") // Pending, Active, Inactive
+  role         String        @default("Volunteer") // Candidate, Admin, Area Manager, Team Leader, Volunteer
+  joinedDate   DateTime      @default(now())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  
+  // Relations
+  areaManager  AreaManager?
+  teamLeader   TeamLeader?
+  volunteer    Volunteer?
+  auditLogs    AuditLog[]
+  notifications Notification[]
+  documents    Document[]
+  issuesReported Issue[]     @relation("ReportedBy")
+  issuesAssigned Issue[]     @relation("AssignedTo")
+}
+
+// ─── Constituency & Geography ──────────────────────────────────────────────────
+
+model Constituency {
+  id                   String   @id @default(uuid())
+  name                 String
+  state                String
+  code                 String   @unique
+  population           Int
+  totalAreas           Int      @default(0)
+  totalPollingStations Int      @default(0)
+  totalHouseholds      Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  areas                Area[]
+}
+
+model Area {
+  id                String            @id @default(uuid())
+  name              String
+  code              String            @unique
+  population        Int
+  status            String            @default("Active") // Active, Inactive
+  householdCoverage Int               @default(0)
+  constituencyId    String
+  constituency      Constituency      @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Relations
+  managers          AreaManager[]
+  teamLeaders       TeamLeader[]
+  volunteers        Volunteer[]
+  wards             Ward[]
+  pollingStations   PollingStation[]
+  activities        Activity[]
+  issues            Issue[]
+}
+
+model AreaManager {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  areaId    String
+  area      Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TeamLeader {
+  id              String           @id @default(uuid())
+  userId          String           @unique
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  areaId          String
+  area            Area             @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  pollingStations String           @default("") // Comma-separated list of assigned PS numbers/names
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  pollingStationRefs PollingStation[]
+  activities      Activity[]
+}
+
+model Volunteer {
+  id               String               @id @default(uuid())
+  userId           String               @unique
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  areaId           String
+  area             Area                 @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  pollingStationId String?
+  pollingStation   PollingStation?      @relation(fields: [pollingStationId], references: [id])
+  householdsCount  Int                  @default(0)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  assignments      ActivityAssignment[]
+  households       Household[]
+  groundReports    GroundReport[]
+}
+
+model Ward {
+  id         String   @id @default(uuid())
+  name       String
+  type       String   @default("Ward") // Ward, Village
+  areaId     String
+  area       Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  population Int
+  households Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  householdRefs Household[]
+}
+
+model PollingStation {
+  id           String   @id @default(uuid())
+  number       Int
+  name         String
+  address      String
+  areaId       String
+  area         Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  teamLeaderId String?
+  teamLeader   TeamLeader? @relation(fields: [teamLeaderId], references: [id])
+  recordCount  Int      @default(0)
+  status       String   @default("Pending") // Validated, Pending, Error
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  volunteers   Volunteer[]
+  records      Record[]
+  households   Household[]
+  activities   Activity[]
+  issues       Issue[]
+}
+
+// ─── Household & Family Records ───────────────────────────────────────────────
+
+model Household {
+  id                 String          @id @default(uuid())
+  houseNumber        String
+  headOfHousehold    String
+  contact            String
+  address            String
+  locality           String
+  pollingStationId   String
+  pollingStation     PollingStation  @relation(fields: [pollingStationId], references: [id], onDelete: Cascade)
+  wardId             String
+  ward               Ward            @relation(fields: [wardId], references: [id], onDelete: Cascade)
+  familyMembersCount Int             @default(1)
+  verificationStatus String          @default("Unverified") // Verified, Pending, Unverified
+  lastUpdated        DateTime        @default(now())
+  assignedVolunteerId String?
+  assignedVolunteer  Volunteer?      @relation(fields: [assignedVolunteerId], references: [id])
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  familyMembers      FamilyMember[]
+  records            Record[]
+}
+
+model FamilyMember {
+  id          String    @id @default(uuid())
+  name        String
+  age         Int
+  gender      String
+  relation    String
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  contact     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Record {
+  id                 String         @id @default(uuid())
+  name               String
+  voterId            String         @unique
+  mobile             String?
+  address            String
+  pollingStationId   String
+  pollingStation     PollingStation @relation(fields: [pollingStationId], references: [id], onDelete: Cascade)
+  householdId        String?
+  household          Household?     @relation(fields: [householdId], references: [id])
+  validationStatus   String         @default("Pending") // Validated, Pending, Error
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+// ─── Operations & Activities ──────────────────────────────────────────────────
+
+model Activity {
+  id               String               @id @default(uuid())
+  name             String
+  category         String               // Survey, Meeting, Verification, Event, Audit
+  description      String
+  objective        String
+  date             String
+  startTime        String
+  endTime          String
+  location         String
+  areaId           String
+  area             Area                 @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  pollingStationId String?
+  pollingStation   PollingStation?      @relation(fields: [pollingStationId], references: [id])
+  teamLeaderId     String?
+  teamLeader       TeamLeader?          @relation(fields: [teamLeaderId], references: [id])
+  volunteersCount  Int                  @default(0)
+  capacity         Int                  @default(0)
+  status           String               @default("Draft") // Draft, Approved, Scheduled, In Progress, Completed, Verified, Overdue, Cancelled
+  deadline         String
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  assignments      ActivityAssignment[]
+  groundReports    GroundReport[]
+}
+
+model ActivityAssignment {
+  id           String    @id @default(uuid())
+  activityId   String
+  activity     Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  volunteerId  String
+  volunteer    Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  status       String    @default("Assigned") // Assigned, Accepted, Rejected
+  dateAssigned DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model GroundReport {
+  id               String    @id @default(uuid())
+  activityId       String
+  activity         Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  date             String
+  location         String
+  volunteerId      String
+  volunteer        Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  participantCount Int
+  notes            String
+  issuesRaised     String?
+  followupRequired Boolean   @default(false)
+  status           String    @default("Submitted") // Submitted, Verified, Rejected
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Issue {
+  id               String          @id @default(uuid())
+  reportedById     String
+  reportedBy       User            @relation("ReportedBy", fields: [reportedById], references: [id], onDelete: Cascade)
+  areaId           String
+  area             Area            @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  wardId           String?
+  pollingStationId String?
+  pollingStation   PollingStation? @relation(fields: [pollingStationId], references: [id])
+  category         String          // Roads, Water, Electricity, Drainage, Sanitation, Education, Healthcare, Transport, Other
+  description      String
+  priority         String          @default("Medium") // Low, Medium, High, Critical
+  dateReported     String
+  assignedToId     String?
+  assignedTo       User?           @relation("AssignedTo", fields: [assignedToId], references: [id])
+  status           String          @default("New") // New, Assigned, In Progress, Pending, Resolved, Closed
+  resolution       String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+// ─── System & Metadata ────────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(uuid())
+  type      String   // Activity Reminder, Report Submitted, Issue Escalation, Verification Request, Assignment Update, Overdue Task, Approval Request
+  title     String
+  message   String
+  time      String
+  read      Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Document {
+  id           String   @id @default(uuid())
+  name         String
+  category     String
+  type         String
+  size         String
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  uploadedDate String
+  accessLevel  String   @default("All") // All, Area Manager+, Admin Only
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Course {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  duration     String
+  modulesCount Int
+  progress     Int      @default(0)
+  status       String   @default("Not Started") // Completed, In Progress, Not Started
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  date      String
+  time      String
+  details   String
+  createdAt DateTime @default(now())
+}
