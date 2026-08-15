@@ -3,6 +3,7 @@
 import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 interface PageHeaderProps {
   title: string;
@@ -10,7 +11,7 @@ interface PageHeaderProps {
   icon?: LucideIcon;
   action?: {
     label: string;
-    onClick: () => void;
+    href: string;
     icon?: LucideIcon;
   };
   children?: ReactNode;
@@ -45,9 +46,11 @@ export function PageHeader({
       <div className="flex items-center gap-2 mt-3 sm:mt-0">
         {children}
         {action && (
-          <Button onClick={action.onClick} size="sm" className="gap-1.5">
-            <ActionIcon className="h-4 w-4" />
-            {action.label}
+          <Button asChild size="sm" className="gap-1.5">
+            <Link href={action.href}>
+              <ActionIcon className="h-4 w-4" />
+              {action.label}
+            </Link>
           </Button>
         )}
       </div>
