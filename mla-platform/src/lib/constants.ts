@@ -183,24 +183,24 @@ export const NAVIGATION: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Candidate	Profile",
-    href: "/Candidate	Profile",
+    title: "Candidate Profile",
+    href: "#",
     icon: Package,
     children: [
       {
-        title: "Personal	Information",
-        href: "/Personal	Information",
+        title: "Personal Information",
+        href: "/candidate/personal-info",
         icon: User,
         roles: [ROLES.CANDIDATE, ROLES.ADMIN],
       },
       {
-        title: "Constituency	Information",
-        href: "/Constituency	Information",
+        title: "Constituency Information",
+        href: "/constituency/add",
         icon: GraduationCap,
       },
       {
-        title: "Profile	Dashboard",
-        href: "/Profile	Dashboard",
+        title: "Profile Dashboard",
+        href: "/profile-dashboard",
         icon: GraduationCap,
       },
     ],
