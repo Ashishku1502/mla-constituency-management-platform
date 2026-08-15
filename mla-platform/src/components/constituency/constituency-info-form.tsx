@@ -52,11 +52,28 @@ export function ConstituencyInfoForm() {
 
   const onSubmit = async (data: ConstituencyInfoFormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Form data:", data);
-    toast.success("Constituency information saved successfully!");
-    setIsSubmitting(false);
+    try {
+      const response = await fetch("/api/constituency/info", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Constituency information saved successfully!");
+      } else {
+        toast.error(result.error || "Failed to save constituency info");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

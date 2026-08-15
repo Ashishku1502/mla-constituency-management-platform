@@ -52,11 +52,28 @@ export function PersonalInfoForm() {
 
   const onSubmit = async (data: PersonalInfoFormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Form data:", data);
-    toast.success("Personal information updated successfully!");
-    setIsSubmitting(false);
+    try {
+      const response = await fetch("/api/candidate/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Personal information updated successfully!");
+      } else {
+        toast.error(result.error || "Failed to update profile");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

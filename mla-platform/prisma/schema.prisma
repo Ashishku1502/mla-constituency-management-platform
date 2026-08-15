@@ -24,6 +24,7 @@ model User {
   areaManager  AreaManager?
   teamLeader   TeamLeader?
   volunteer    Volunteer?
+  candidateProfile CandidateProfile?
   auditLogs    AuditLog[]
   notifications Notification[]
   documents    Document[]
@@ -42,6 +43,12 @@ model Constituency {
   totalAreas           Int      @default(0)
   totalPollingStations Int      @default(0)
   totalHouseholds      Int      @default(0)
+  registeredVoters     Int      @default(0)
+  wards                Int      @default(0)
+  villages             Int      @default(0)
+  localities           Int      @default(0)
+  constituencyNumber   String?
+  district             String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
@@ -328,4 +335,24 @@ model AuditLog {
   time      String
   details   String
   createdAt DateTime @default(now())
+}
+
+// ─── Candidate Profile ──────────────────────────────────────────────────────────
+
+model CandidateProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  designation     String
+  politicalInfo   String?
+  email           String
+  phone           String
+  biography       String?
+  education       String?
+  experience      String?
+  publicProfile   String?
+  photoUrl        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
