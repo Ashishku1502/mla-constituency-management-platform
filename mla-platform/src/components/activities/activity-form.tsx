@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ export function ActivityForm() {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<ActivityFormValues>({
     resolver: zodResolver(activitySchema),
@@ -56,8 +56,8 @@ export function ActivityForm() {
     },
   });
 
-  const categoryValue = watch("category");
-  const statusValue = watch("status");
+  const categoryValue = useWatch({ name: "category", control });
+  const statusValue = useWatch({ name: "status", control });
 
   const onSubmit = async (data: ActivityFormValues) => {
     setIsSubmitting(true);
@@ -105,7 +105,7 @@ export function ActivityForm() {
 
             <div className="space-y-2">
               <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
-              <Select value={categoryValue} onValueChange={(val) => setValue("category", val, { shouldValidate: true })}>
+              <Select value={categoryValue} onValueChange={(val) => setValue("category", val as string, { shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -118,7 +118,7 @@ export function ActivityForm() {
 
             <div className="space-y-2">
               <Label htmlFor="status">Status <span className="text-red-500">*</span></Label>
-              <Select value={statusValue} onValueChange={(val) => setValue("status", val, { shouldValidate: true })}>
+              <Select value={statusValue} onValueChange={(val) => setValue("status", val as string, { shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>

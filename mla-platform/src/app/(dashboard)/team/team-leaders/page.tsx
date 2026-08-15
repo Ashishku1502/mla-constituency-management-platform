@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import prisma from "@/lib/prisma";
 import { PageHeader } from "@/components/shared/page-header";
 import { UserPlus, Plus } from "lucide-react";

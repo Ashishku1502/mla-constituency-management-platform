@@ -11,7 +11,8 @@ interface PageHeaderProps {
   icon?: LucideIcon;
   action?: {
     label: string;
-    href: string;
+    href?: string;
+    onClick?: () => void;
     icon?: LucideIcon;
   };
   children?: ReactNode;
@@ -46,12 +47,17 @@ export function PageHeader({
       <div className="flex items-center gap-2 mt-3 sm:mt-0">
         {children}
         {action && (
-          <Button asChild size="sm" className="gap-1.5">
-            <Link href={action.href}>
+          action.href ? (
+            <Button render={<Link href={action.href} />} size="sm" className="gap-1.5" onClick={action.onClick}>
               <ActionIcon className="h-4 w-4" />
               {action.label}
-            </Link>
-          </Button>
+            </Button>
+          ) : (
+            <Button size="sm" className="gap-1.5" onClick={action.onClick}>
+              <ActionIcon className="h-4 w-4" />
+              {action.label}
+            </Button>
+          )
         )}
       </div>
     </div>

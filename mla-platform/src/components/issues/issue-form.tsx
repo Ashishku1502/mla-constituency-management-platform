@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ export function IssueForm() {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<IssueFormValues>({
     resolver: zodResolver(issueSchema),
@@ -50,8 +50,8 @@ export function IssueForm() {
     },
   });
 
-  const categoryValue = watch("category");
-  const priorityValue = watch("priority");
+  const categoryValue = useWatch({ name: "category", control });
+  const priorityValue = useWatch({ name: "priority", control });
 
   const onSubmit = async (data: IssueFormValues) => {
     setIsSubmitting(true);
@@ -94,7 +94,7 @@ export function IssueForm() {
             
             <div className="space-y-2">
               <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
-              <Select value={categoryValue} onValueChange={(val) => setValue("category", val, { shouldValidate: true })}>
+              <Select value={categoryValue} onValueChange={(val) => setValue("category", val as string, { shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -107,7 +107,7 @@ export function IssueForm() {
 
             <div className="space-y-2">
               <Label htmlFor="priority">Priority <span className="text-red-500">*</span></Label>
-              <Select value={priorityValue} onValueChange={(val) => setValue("priority", val, { shouldValidate: true })}>
+              <Select value={priorityValue} onValueChange={(val) => setValue("priority", val as string, { shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
