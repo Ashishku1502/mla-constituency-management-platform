@@ -13,30 +13,56 @@ import {
   CheckSquare 
 } from "lucide-react";
 
+import prisma from "@/lib/prisma";
+
 export const metadata: Metadata = {
   title: "Profile Dashboard | MLA Platform",
   description: "Overview of key metrics and statistics for the constituency.",
 };
 
-export default function ProfileDashboardPage() {
-  // In a real application, these values would be fetched from the database
+export default async function ProfileDashboardPage() {
+  // Fetch live metrics from the database concurrently
+  const [
+    totalAreas,
+    totalTeamLeaders,
+    totalVolunteers,
+    totalPollingStations,
+    totalHouseholds,
+    totalActivities,
+    completedActivities,
+    totalIssues,
+    resolvedIssues
+  ] = await Promise.all([
+    prisma.area.count(),
+    prisma.teamLeader.count(),
+    prisma.volunteer.count(),
+    prisma.pollingStation.count(),
+    prisma.household.count(),
+    prisma.activity.count(),
+    prisma.activity.count({ where: { status: "Completed" } }),
+    prisma.issue.count(),
+    prisma.issue.count({ where: { status: { in: ["Resolved", "Closed"] } } }),
+  ]);
+
+  const pendingActivities = totalActivities - completedActivities;
+
   const metrics = [
-    { title: "Total Areas", value: "24", icon: Map, color: "text-blue-500" },
-    { title: "Total Team Leaders", value: "48", icon: Users, color: "text-indigo-500" },
-    { title: "Total Volunteers", value: "342", icon: UserCheck, color: "text-green-500" },
-    { title: "Total Polling Stations", value: "120", icon: MapPin, color: "text-red-500" },
-    { title: "Total Households", value: "45,000", icon: Home, color: "text-orange-500" },
+    { title: "Total Areas", value: totalAreas.toString(), icon: Map, color: "text-blue-500" },
+    { title: "Total Team Leaders", value: totalTeamLeaders.toString(), icon: Users, color: "text-indigo-500" },
+    { title: "Total Volunteers", value: totalVolunteers.toString(), icon: UserCheck, color: "text-green-500" },
+    { title: "Total Polling Stations", value: totalPollingStations.toString(), icon: MapPin, color: "text-red-500" },
+    { title: "Total Households", value: totalHouseholds.toLocaleString(), icon: Home, color: "text-orange-500" },
   ];
 
   const activityMetrics = [
-    { title: "Total Activities", value: "156", icon: Activity, color: "text-blue-500" },
-    { title: "Completed Activities", value: "98", icon: CheckCircle2, color: "text-green-500" },
-    { title: "Pending Activities", value: "58", icon: Clock, color: "text-amber-500" },
+    { title: "Total Activities", value: totalActivities.toString(), icon: Activity, color: "text-blue-500" },
+    { title: "Completed Activities", value: completedActivities.toString(), icon: CheckCircle2, color: "text-green-500" },
+    { title: "Pending Activities", value: pendingActivities.toString(), icon: Clock, color: "text-amber-500" },
   ];
 
   const issueMetrics = [
-    { title: "Reported Issues", value: "312", icon: AlertTriangle, color: "text-red-500" },
-    { title: "Resolved Issues", value: "245", icon: CheckSquare, color: "text-emerald-500" },
+    { title: "Reported Issues", value: totalIssues.toString(), icon: AlertTriangle, color: "text-red-500" },
+    { title: "Resolved Issues", value: resolvedIssues.toString(), icon: CheckSquare, color: "text-emerald-500" },
   ];
 
   return (
