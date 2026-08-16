@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -13,10 +12,7 @@ const areaSchema = z.object({
 
 export async function GET(req: Request) {
   try {
-    const session = await auth();
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
+
 
     const { searchParams } = new URL(req.url);
     const constituencyId = searchParams.get("constituencyId");
@@ -79,10 +75,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const session = await auth();
-    if (!session || !session.user || (session.user.role !== "Admin" && session.user.role !== "Candidate")) {
-      return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
-    }
+
 
     const body = await req.json();
     const result = areaSchema.safeParse(body);

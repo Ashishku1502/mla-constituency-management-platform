@@ -1,13 +1,44 @@
-"use client";
-
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
-import { User, Phone, Mail, MapPin, Landmark, Award, Briefcase, GraduationCap, Globe, Link } from "lucide-react";
-import { mockConstituency } from "@/lib/mock-data";
+import { User, Phone, Mail, MapPin, Landmark, Award, Briefcase, GraduationCap, Globe, Link as LinkIcon } from "lucide-react";
 
-export default function CandidateProfilePage() {
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Candidate Profile | MLA Platform",
+  description: "View and manage complete candidate information",
+};
+
+export default async function CandidateProfilePage() {
+  const constituency = await prisma.constituency.findFirst();
+  let candidate = await prisma.candidateProfile.findFirst({
+    include: { user: true }
+  });
+
+  // Default fallback data if no candidate profile exists in DB yet
+  const defaultCandidate = {
+    name: "Amarinder Singh",
+    designation: "Senior Party Leader & Candidate",
+    email: "amarinder.s@constituencyos.org",
+    phone: "+91 98765 43210",
+    biography: "Amarinder Singh is a dedicated public servant and community leader with over 15 years of experience in regional governance. Born and raised in the heart of the constituency, he has championed numerous development projects focusing on rural infrastructure, clean water access, and educational reforms. Known for his grassroots approach, Amarinder has consistently worked towards uniting diverse community factions and bridging the gap between local citizens and state resources.",
+    photoUrl: "https://ui-avatars.com/api/?name=Amarinder+Singh&size=256&background=0D8ABC&color=fff",
+    education: null,
+    experience: null,
+    publicProfile: null,
+    politicalInfo: null,
+  };
+
+  const name = candidate?.name || defaultCandidate.name;
+  const designation = candidate?.designation || defaultCandidate.designation;
+  const email = candidate?.email || defaultCandidate.email;
+  const phone = candidate?.phone || defaultCandidate.phone;
+  const biography = candidate?.biography || defaultCandidate.biography;
+  const photoUrl = candidate?.photoUrl || defaultCandidate.photoUrl;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -23,12 +54,14 @@ export default function CandidateProfilePage() {
           <Card>
             <CardContent className="pt-6 flex flex-col items-center text-center">
               <Avatar className="h-32 w-32 mb-4 ring-4 ring-primary/10">
-                <AvatarImage src="https://ui-avatars.com/api/?name=Amarinder+Singh&size=256&background=0D8ABC&color=fff" />
-                <AvatarFallback className="text-3xl bg-primary text-primary-foreground font-bold">AS</AvatarFallback>
+                <AvatarImage src={photoUrl} />
+                <AvatarFallback className="text-3xl bg-primary text-primary-foreground font-bold">
+                  {name.split(" ").map(n => n[0]).slice(0, 2).join("")}
+                </AvatarFallback>
               </Avatar>
-              <h2 className="text-2xl font-bold tracking-tight">Amarinder Singh</h2>
-              <p className="text-sm font-medium text-primary mt-1">Senior Party Leader & Candidate</p>
-              <p className="text-sm text-muted-foreground mt-0.5">{mockConstituency.name} Constituency</p>
+              <h2 className="text-2xl font-bold tracking-tight">{name}</h2>
+              <p className="text-sm font-medium text-primary mt-1">{designation}</p>
+              <p className="text-sm text-muted-foreground mt-0.5">{constituency?.name || "Constituency"}</p>
               <Badge className="mt-4 bg-primary/10 text-primary hover:bg-primary/20 border-0">Official Nominee</Badge>
             </CardContent>
           </Card>
@@ -42,15 +75,15 @@ export default function CandidateProfilePage() {
               <div className="space-y-3.5 text-sm">
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Phone className="h-4 w-4 shrink-0 text-primary" />
-                  <span>+91 98765 43210</span>
+                  <span>{phone}</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Mail className="h-4 w-4 shrink-0 text-primary" />
-                  <span>amarinder.s@constituencyos.org</span>
+                  <span>{email}</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <MapPin className="h-4 w-4 shrink-0 text-primary" />
-                  <span>Anandpur Sahib Town, Punjab, India</span>
+                  <span>{constituency?.name}, {constituency?.state}, India</span>
                 </div>
               </div>
 
@@ -58,15 +91,15 @@ export default function CandidateProfilePage() {
                 <h4 className="font-semibold text-xs uppercase text-muted-foreground tracking-wider mb-2">Public Profiles</h4>
                 <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
                   <Globe className="h-4 w-4 shrink-0" />
-                  <span>amarindersingh.org</span>
+                  <span>Website</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
-                  <Link className="h-4 w-4 shrink-0" />
-                  <span>@AmarinderSpeaks</span>
+                  <LinkIcon className="h-4 w-4 shrink-0" />
+                  <span>Twitter Profile</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
-                  <Link className="h-4 w-4 shrink-0" />
-                  <span>/AmarinderSinghOfficial</span>
+                  <LinkIcon className="h-4 w-4 shrink-0" />
+                  <span>Facebook Page</span>
                 </div>
               </div>
             </CardContent>
@@ -83,7 +116,7 @@ export default function CandidateProfilePage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Amarinder Singh is a dedicated public servant and community leader with over 15 years of experience in regional governance. Born and raised in the heart of the constituency, he has championed numerous development projects focusing on rural infrastructure, clean water access, and educational reforms. Known for his grassroots approach, Amarinder has consistently worked towards uniting diverse community factions and bridging the gap between local citizens and state resources.
+                {biography}
               </p>
             </CardContent>
           </Card>

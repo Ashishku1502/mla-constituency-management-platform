@@ -1,13 +1,23 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
-import { Map, Layers, ZoomIn, Filter } from "lucide-react";
-import { mockAreas, mockConstituency } from "@/lib/mock-data";
+import { Map } from "lucide-react";
+import DynamicMap from "@/components/map/DynamicMap";
+import prisma from "@/lib/prisma";
 
-export default function ConstituencyMapPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ConstituencyMapPage() {
+  const constituency = await prisma.constituency.findFirst();
+  const areas = await prisma.area.findMany({
+    include: {
+      _count: {
+        select: { pollingStations: true }
+      }
+    },
+    take: 5
+  });
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -19,42 +29,9 @@ export default function ConstituencyMapPage() {
       <div className="grid gap-4 lg:grid-cols-4">
         {/* Map Area */}
         <Card className="lg:col-span-3">
-          <CardContent className="p-0">
-            <div className="relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 h-[500px] rounded-lg flex items-center justify-center">
-              {/* Map placeholder - will be replaced with Leaflet in Phase 4 */}
-              <div className="text-center space-y-4">
-                <div className="mx-auto w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <Map className="h-10 w-10 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Interactive Map</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm mx-auto mt-1">
-                    {mockConstituency.name} constituency map with area
-                    boundaries, polling stations, and activity markers.
-                  </p>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Button variant="outline" size="sm" className="gap-1.5">
-                    <Layers className="h-3.5 w-3.5" />
-                    Layers
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-1.5">
-                    <ZoomIn className="h-3.5 w-3.5" />
-                    Zoom
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-1.5">
-                    <Filter className="h-3.5 w-3.5" />
-                    Filters
-                  </Button>
-                </div>
-              </div>
-
-              {/* Map overlay controls */}
-              <div className="absolute top-3 left-3 flex flex-col gap-1">
-                <Button size="icon" variant="secondary" className="h-8 w-8 shadow-sm">
-                  <ZoomIn className="h-4 w-4" />
-                </Button>
-              </div>
+          <CardContent className="p-0 overflow-hidden rounded-lg border-none">
+            <div className="h-[600px] w-full z-0 relative">
+              <DynamicMap />
             </div>
           </CardContent>
         </Card>
@@ -64,32 +41,32 @@ export default function ConstituencyMapPage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold">
-                {mockConstituency.name}
+                {constituency?.name || "Unknown Constituency"}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">State</span>
-                <span className="font-medium">{mockConstituency.state}</span>
+                <span className="font-medium">{constituency?.state || "-"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Code</span>
-                <span className="font-mono text-xs">{mockConstituency.code}</span>
+                <span className="font-mono text-xs">{constituency?.code || "-"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Population</span>
                 <span className="font-medium">
-                  {mockConstituency.population.toLocaleString()}
+                  {constituency?.population?.toLocaleString() || 0}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Areas</span>
-                <span className="font-medium">{mockConstituency.totalAreas}</span>
+                <span className="font-medium">{constituency?.totalAreas || 0}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Polling Stations</span>
                 <span className="font-medium">
-                  {mockConstituency.totalPollingStations}
+                  {constituency?.totalPollingStations || 0}
                 </span>
               </div>
             </CardContent>
@@ -100,7 +77,7 @@ export default function ConstituencyMapPage() {
               <CardTitle className="text-sm font-semibold">Areas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {mockAreas.slice(0, 5).map((area) => (
+              {areas.map((area) => (
                 <div
                   key={area.id}
                   className="flex items-center justify-between py-1.5 text-sm cursor-pointer hover:bg-muted/50 rounded px-2 -mx-2"
@@ -116,7 +93,7 @@ export default function ConstituencyMapPage() {
                         : "bg-gray-100 text-gray-600"
                     }
                   >
-                    {area.pollingStations} PS
+                    {area._count.pollingStations} PS
                   </Badge>
                 </div>
               ))}

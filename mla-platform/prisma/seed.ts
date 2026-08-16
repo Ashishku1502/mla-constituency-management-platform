@@ -1,12 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
-import bcrypt from "bcrypt";
-
-const connectionString = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/mla_db?schema=public";
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+import { loadEnvConfig } from "@next/env";
+loadEnvConfig(process.cwd());
+import { prisma } from "../src/lib/prisma";
 
 async function main() {
   console.log("Seeding database...");
@@ -33,7 +27,7 @@ async function main() {
   await prisma.course.deleteMany({});
 
   // 1. Password Hashing
-  const passwordHash = await bcrypt.hash("password123", 10);
+  const passwordHash = "dummy_hash";
 
   // 2. Users
   console.log("Creating default users...");
@@ -314,5 +308,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await pool.end();
+    await prisma.$disconnect();
   });

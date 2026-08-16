@@ -1,11 +1,16 @@
-"use client";
-
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
 import { GitBranch, ChevronRight } from "lucide-react";
-import { mockConstituency, mockAreas, mockTeamMembers } from "@/lib/mock-data";
+
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Organization Tree | MLA Platform",
+  description: "Hierarchical view of the constituency team structure",
+};
 
 function OrgNode({ label, sublabel, level, count, children }: { label: string; sublabel?: string; level: string; count?: number; children?: React.ReactNode }) {
   const colors: Record<string, string> = {
@@ -38,7 +43,27 @@ function OrgNode({ label, sublabel, level, count, children }: { label: string; s
   );
 }
 
-export default function OrgTreePage() {
+export default async function OrgTreePage() {
+  const constituency = await prisma.constituency.findFirst();
+  
+  if (!constituency) {
+    return <div>No constituency configured.</div>;
+  }
+
+  const areas = await prisma.area.findMany({
+    where: { status: "Active" },
+    include: {
+      managers: { include: { user: true } },
+      teamLeaders: { include: { user: true } },
+      volunteers: { include: { user: true } },
+      _count: {
+        select: { pollingStations: true, volunteers: true }
+      }
+    },
+    take: 4,
+    orderBy: { name: "asc" }
+  });
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -50,29 +75,24 @@ export default function OrgTreePage() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">
-            {mockConstituency.name} — Organizational Structure
+            {constituency.name} — Organizational Structure
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <OrgNode label={mockConstituency.name} sublabel="Constituency" level="constituency">
-            {mockAreas.filter(a => a.status === "Active").slice(0, 4).map((area) => (
-              <OrgNode key={area.id} label={area.name} sublabel={`Area • ${area.pollingStations} Polling Stations`} level="area" count={area.volunteers}>
-                {area.managerId && (
-                  <OrgNode label={area.manager} sublabel="Area Manager" level="manager">
-                    {mockTeamMembers.teamLeaders
-                      .filter((tl) => tl.area === area.name)
-                      .map((tl) => (
-                        <OrgNode key={tl.id} label={tl.name} sublabel={`Team Leader • ${tl.pollingStations}`} level="leader">
-                          {mockTeamMembers.volunteers
-                            .filter((v) => v.area === area.name)
-                            .slice(0, 2)
-                            .map((v) => (
-                              <OrgNode key={v.id} label={v.name} sublabel={`Volunteer • ${v.households} Households`} level="volunteer" />
-                            ))}
-                        </OrgNode>
-                      ))}
+          <OrgNode label={constituency.name} sublabel="Constituency" level="constituency">
+            {areas.map((area) => (
+              <OrgNode key={area.id} label={area.name} sublabel={`Area • ${area._count.pollingStations} Polling Stations`} level="area" count={area._count.volunteers}>
+                {area.managers.map((manager) => (
+                  <OrgNode key={manager.id} label={manager.user.name} sublabel="Area Manager" level="manager">
+                    {area.teamLeaders.map((tl) => (
+                      <OrgNode key={tl.id} label={tl.user.name} sublabel={`Team Leader • ${tl.pollingStations || "Unassigned"}`} level="leader">
+                        {area.volunteers.slice(0, 3).map((v) => (
+                          <OrgNode key={v.id} label={v.user.name} sublabel={`Volunteer • ${v.householdsCount} Households`} level="volunteer" />
+                        ))}
+                      </OrgNode>
+                    ))}
                   </OrgNode>
-                )}
+                ))}
               </OrgNode>
             ))}
           </OrgNode>

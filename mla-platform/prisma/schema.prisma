@@ -1,7 +1,8 @@
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -53,6 +54,15 @@ model Constituency {
   updatedAt            DateTime @updatedAt
 
   areas                Area[]
+}
+
+model MapFeature {
+  id          String   @id @default(uuid())
+  name        String
+  featureType String   // Constituency, Ward, Village, Locality, PollingStation
+  geoJson     String   // Stringified GeoJSON data
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Area {

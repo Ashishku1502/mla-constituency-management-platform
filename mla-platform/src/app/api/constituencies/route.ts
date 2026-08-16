@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -15,10 +14,7 @@ const constituencySchema = z.object({
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session || !session.user) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
+
 
     const constituencies = await prisma.constituency.findMany({
       orderBy: { name: "asc" },
@@ -36,10 +32,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const session = await auth();
-    if (!session || !session.user || session.user.role !== "Admin") {
-      return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
-    }
+
 
     const body = await req.json();
     const result = constituencySchema.safeParse(body);

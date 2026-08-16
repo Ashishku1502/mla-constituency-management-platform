@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -37,15 +39,6 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import {
-  mockDashboardStats,
-  areaPerformanceData,
-  activityCompletionData,
-  monthlyActivityData,
-  issueResolutionData,
-  volunteerActivityData,
-  mockAreas,
-} from "@/lib/mock-data";
 
 interface StatCardProps {
   title: string;
@@ -98,23 +91,22 @@ function StatCard({ title, value, icon: Icon, trend, color }: StatCardProps) {
   );
 }
 
-function AreaCoverageList() {
+function AreaCoverageList({ areas }: { areas: any[] }) {
   return (
     <div className="space-y-3">
-      {mockAreas
-        .filter((a) => a.status === "Active")
+      {areas
         .slice(0, 6)
-        .map((area) => (
-          <div key={area.id} className="space-y-1.5">
+        .map((area, idx) => (
+          <div key={idx} className="space-y-1.5">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium truncate max-w-[180px]">
-                {area.name}
+                {area.fullName || area.name}
               </span>
               <span className="text-muted-foreground text-xs">
-                {area.householdCoverage}%
+                {area.households}%
               </span>
             </div>
-            <Progress value={area.householdCoverage} className="h-1.5" />
+            <Progress value={area.households} className="h-1.5" />
           </div>
         ))}
     </div>
@@ -124,7 +116,31 @@ function AreaCoverageList() {
 const CHART_COLORS = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export default function DashboardPage() {
-  const stats = mockDashboardStats;
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const res = await fetch("/api/dashboard/stats");
+        if (res.ok) {
+          const fetchedData = await res.json();
+          setData(fetchedData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadStats();
+  }, []);
+
+  if (loading || !data) {
+    return <div className="space-y-6"><Skeleton className="h-[200px] w-full" /><Skeleton className="h-[400px] w-full" /></div>;
+  }
+
+  const { stats, charts } = data;
 
   return (
     <div className="space-y-6">
@@ -289,7 +305,7 @@ export default function DashboardPage() {
               <ResponsiveContainer width="50%" height={200}>
                 <PieChart>
                   <Pie
-                    data={activityCompletionData}
+                    data={charts.activityCompletionData}
                     cx="50%"
                     cy="50%"
                     innerRadius={55}
@@ -298,7 +314,7 @@ export default function DashboardPage() {
                     dataKey="value"
                     stroke="none"
                   >
-                    {activityCompletionData.map((entry, index) => (
+                    {charts.activityCompletionData.map((entry: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -306,7 +322,7 @@ export default function DashboardPage() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="space-y-2.5 flex-1">
-                {activityCompletionData.map((item) => (
+                {charts.activityCompletionData.map((item: any) => (
                   <div
                     key={item.name}
                     className="flex items-center justify-between text-sm"
@@ -340,7 +356,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={areaPerformanceData}>
+              <BarChart data={charts.areaPerformanceData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="name"
@@ -392,7 +408,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={monthlyActivityData}>
+              <AreaChart data={charts.monthlyActivityData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="month"
@@ -454,7 +470,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={issueResolutionData}>
+              <LineChart data={charts.issueResolutionData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="month"
@@ -510,7 +526,7 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <AreaCoverageList />
+            <AreaCoverageList areas={charts.areaPerformanceData} />
           </CardContent>
         </Card>
 
@@ -526,7 +542,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={volunteerActivityData}>
+              <BarChart data={charts.volunteerActivityData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="month"
