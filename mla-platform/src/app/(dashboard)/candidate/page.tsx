@@ -14,7 +14,7 @@ export const metadata = {
 
 export default async function CandidateProfilePage() {
   const constituency = await prisma.constituency.findFirst();
-  let candidate = await prisma.candidateProfile.findFirst({
+  const candidate = await prisma.candidateProfile.findFirst({
     include: { user: true }
   });
 
