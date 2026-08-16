@@ -1,15 +1,25 @@
-"use client";
-
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Activity, MapPin, Navigation, User } from "lucide-react";
-import { mockActivities } from "@/lib/mock-data";
 
-export default function TrackingPage() {
-  const active = mockActivities.filter(a => a.status === "In Progress" || a.status === "Completed");
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Live Activity Tracking | MLA Platform",
+  description: "Monitor active field operations, team locations, and completion updates",
+};
+
+export default async function TrackingPage() {
+  const activeActivities = await prisma.activity.findMany({
+    where: { status: { in: ["In Progress", "Completed"] } },
+    include: { teamLeader: { include: { user: true } } },
+    orderBy: { updatedAt: "desc" },
+    take: 10
+  });
 
   return (
     <div className="space-y-6">
@@ -42,18 +52,22 @@ export default function TrackingPage() {
             <CardDescription>Live operations updates feed</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3.5">
-            {active.slice(0, 4).map((act) => (
-              <div key={act.id} className="p-3 border rounded-lg space-y-1">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-semibold text-xs truncate max-w-[130px]">{act.name}</h4>
-                  <StatusBadge status={act.status} />
+            {activeActivities.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No active streams found.</p>
+            ) : (
+              activeActivities.slice(0, 4).map((act) => (
+                <div key={act.id} className="p-3 border rounded-lg space-y-1">
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-semibold text-xs truncate max-w-[130px]">{act.name}</h4>
+                    <StatusBadge status={act.status} />
+                  </div>
+                  <div className="text-[11px] text-muted-foreground space-y-0.5">
+                    <div className="flex items-center gap-1 truncate"><MapPin className="h-3 w-3" />{act.location}</div>
+                    <div className="flex items-center gap-1"><User className="h-3 w-3" />Lead: {act.teamLeader?.user.name || "Unassigned"}</div>
+                  </div>
                 </div>
-                <div className="text-[11px] text-muted-foreground space-y-0.5">
-                  <div className="flex items-center gap-1 truncate"><MapPin className="h-3 w-3" />{act.location}</div>
-                  <div className="flex items-center gap-1"><User className="h-3 w-3" />Lead: {act.teamLeader}</div>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
       </div>

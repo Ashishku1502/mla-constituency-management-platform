@@ -1,65 +1,72 @@
-"use client";
+import prisma from "@/lib/prisma";
+import { AnalyticsClient } from "./analytics-client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/shared/page-header";
-import { FileBarChart, Download, Calendar } from "lucide-react";
-import { ResponsiveContainer, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Area, BarChart, Bar, Legend } from "recharts";
-import { monthlyActivityData, issueResolutionData, mockConstituency } from "@/lib/mock-data";
+export const dynamic = "force-dynamic";
 
-export default function ReportsAnalyticsPage() {
+export const metadata = {
+  title: "Reports & Analytics | MLA Platform",
+  description: "Comprehensive dashboard performance analytics, data metrics, and trends",
+};
+
+export default async function ReportsAnalyticsPage() {
+  const [activities, issues] = await Promise.all([
+    prisma.activity.findMany({ select: { date: true, status: true } }),
+    prisma.issue.findMany({ select: { dateReported: true, status: true } })
+  ]);
+
+  // Aggregate Activities by month
+  const activityMonths: Record<string, { completed: number, pending: number }> = {};
+  activities.forEach(act => {
+    if (!act.date) return;
+    const date = new Date(act.date);
+    if (isNaN(date.getTime())) return;
+    const month = date.toLocaleString('default', { month: 'short' });
+    if (!activityMonths[month]) activityMonths[month] = { completed: 0, pending: 0 };
+    
+    if (act.status === "Completed") {
+      activityMonths[month].completed += 1;
+    } else {
+      activityMonths[month].pending += 1;
+    }
+  });
+
+  const monthlyActivityData = Object.entries(activityMonths).map(([month, data]) => ({
+    month,
+    completed: data.completed,
+    pending: data.pending
+  }));
+
+  // Ensure some fallback data if DB is empty
+  if (monthlyActivityData.length === 0) {
+    monthlyActivityData.push({ month: "Jan", completed: 0, pending: 0 });
+  }
+
+  // Aggregate Issues by month
+  const issueMonths: Record<string, { reported: number, resolved: number }> = {};
+  issues.forEach(issue => {
+    if (!issue.dateReported) return;
+    const date = new Date(issue.dateReported);
+    if (isNaN(date.getTime())) return;
+    const month = date.toLocaleString('default', { month: 'short' });
+    if (!issueMonths[month]) issueMonths[month] = { reported: 0, resolved: 0 };
+    
+    issueMonths[month].reported += 1;
+    if (issue.status === "Resolved" || issue.status === "Closed") {
+      issueMonths[month].resolved += 1;
+    }
+  });
+
+  const issueResolutionData = Object.entries(issueMonths).map(([month, data]) => ({
+    month,
+    reported: data.reported,
+    resolved: data.resolved
+  }));
+
+  if (issueResolutionData.length === 0) {
+    issueResolutionData.push({ month: "Jan", reported: 0, resolved: 0 });
+  }
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Reports & Analytics"
-        description="Comprehensive dashboard performance analytics, data metrics, and trends"
-        icon={FileBarChart}
-        action={{ label: "Export PDF Report", onClick: () => {}, icon: Download }}
-      />
-
-      {/* Analytics Summary */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Cumulative performance area chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base font-semibold">Operational Accomplishments</CardTitle>
-            <CardDescription className="text-xs">Timeline of completed tasks vs scheduled guidelines</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <AreaChart data={monthlyActivityData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Area type="monotone" dataKey="completed" stroke="#10b981" fill="#10b98122" name="Completed" />
-                <Area type="monotone" dataKey="pending" stroke="#6366f1" fill="#6366f122" name="Pending" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Issue resolution efficiency */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base font-semibold">Issue Resolution Dynamics</CardTitle>
-            <CardDescription className="text-xs">Reported vs resolved issues comparison per month</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={issueResolutionData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="reported" fill="#ef4444" name="Issues Reported" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="resolved" fill="#10b981" name="Issues Resolved" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <AnalyticsClient data={{ monthlyActivityData, issueResolutionData }} />
   );
 }

@@ -1,14 +1,21 @@
-"use client";
-
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/shared/page-header";
 import { Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
-import { mockActivities } from "@/lib/mock-data";
 
-export default function ActivityCalendarPage() {
-  // Sort activities by date
-  const sorted = [...mockActivities].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Activity Calendar | MLA Platform",
+  description: "Schedule and time view of all planned activities",
+};
+
+export default async function ActivityCalendarPage() {
+  const activities = await prisma.activity.findMany({
+    orderBy: { date: "asc" },
+    take: 20
+  });
 
   return (
     <div className="space-y-6">
@@ -41,19 +48,23 @@ export default function ActivityCalendarPage() {
             <CardDescription>chronological list of upcoming activities</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3.5 max-h-[400px] overflow-y-auto pr-1">
-            {sorted.slice(0, 5).map((act) => (
-              <div key={act.id} className="p-3 border rounded-lg space-y-1.5 hover:bg-muted/30 transition-colors cursor-pointer">
-                <div className="flex justify-between items-start gap-2">
-                  <h4 className="font-semibold text-xs truncate max-w-[150px]">{act.name}</h4>
-                  <Badge variant="outline" className="text-[10px] uppercase shrink-0">{act.category}</Badge>
+            {activities.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No upcoming tasks scheduled.</p>
+            ) : (
+              activities.slice(0, 5).map((act) => (
+                <div key={act.id} className="p-3 border rounded-lg space-y-1.5 hover:bg-muted/30 transition-colors cursor-pointer">
+                  <div className="flex justify-between items-start gap-2">
+                    <h4 className="font-semibold text-xs truncate max-w-[150px]">{act.name}</h4>
+                    <Badge variant="outline" className="text-[10px] uppercase shrink-0">{act.category}</Badge>
+                  </div>
+                  <div className="flex flex-col gap-1 text-[11px] text-muted-foreground">
+                    <div className="flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{act.date}</div>
+                    <div className="flex items-center gap-1"><Clock className="h-3 w-3" />{act.startTime} - {act.endTime}</div>
+                    <div className="flex items-center gap-1 truncate"><MapPin className="h-3 w-3" />{act.location}</div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1 text-[11px] text-muted-foreground">
-                  <div className="flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{act.date}</div>
-                  <div className="flex items-center gap-1"><Clock className="h-3 w-3" />{act.startTime} - {act.endTime}</div>
-                  <div className="flex items-center gap-1 truncate"><MapPin className="h-3 w-3" />{act.location}</div>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
       </div>

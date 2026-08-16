@@ -1,13 +1,24 @@
-"use client";
-
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/shared/page-header";
 import { Database, Search, Upload, Download, ShieldCheck, AlertTriangle } from "lucide-react";
-import { mockDashboardStats } from "@/lib/mock-data";
 
-export default function RecordDatabasePage() {
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Record Database | MLA Platform",
+  description: "Secure authorized records database with import, validation, and search",
+};
+
+export default async function RecordDatabasePage() {
+  const [totalRecords, validatedRecords, needsReviewRecords] = await Promise.all([
+    prisma.record.count(),
+    prisma.record.count({ where: { validationStatus: "Validated" } }),
+    prisma.record.count({ where: { validationStatus: "Pending" } })
+  ]);
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -33,7 +44,7 @@ export default function RecordDatabasePage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Total Records</p>
-              <p className="text-lg font-bold">{mockDashboardStats.totalRecords.toLocaleString()}</p>
+              <p className="text-lg font-bold">{totalRecords.toLocaleString()}</p>
             </div>
           </CardContent>
         </Card>
@@ -44,7 +55,7 @@ export default function RecordDatabasePage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Validated</p>
-              <p className="text-lg font-bold">{Math.round(mockDashboardStats.totalRecords * 0.94).toLocaleString()}</p>
+              <p className="text-lg font-bold">{validatedRecords.toLocaleString()}</p>
             </div>
           </CardContent>
         </Card>
@@ -55,7 +66,7 @@ export default function RecordDatabasePage() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Needs Review</p>
-              <p className="text-lg font-bold">{Math.round(mockDashboardStats.totalRecords * 0.06).toLocaleString()}</p>
+              <p className="text-lg font-bold">{needsReviewRecords.toLocaleString()}</p>
             </div>
           </CardContent>
         </Card>
