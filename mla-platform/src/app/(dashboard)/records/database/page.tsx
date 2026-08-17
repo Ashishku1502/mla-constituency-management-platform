@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/shared/page-header";
 import { Database, Search, Upload, Download, ShieldCheck, AlertTriangle } from "lucide-react";
+import { RecordsClient } from "./records-client";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,15 @@ export default async function RecordDatabasePage() {
     prisma.record.count({ where: { validationStatus: "Validated" } }),
     prisma.record.count({ where: { validationStatus: "Pending" } })
   ]);
+
+  const initialData = await prisma.record.findMany({
+    take: 10,
+    orderBy: { updatedAt: "desc" },
+    include: {
+      pollingStation: { select: { id: true, name: true, number: true } },
+      household: { select: { id: true, houseNumber: true, locality: true } },
+    }
+  });
 
   return (
     <div className="space-y-6">
@@ -72,32 +82,10 @@ export default async function RecordDatabasePage() {
         </Card>
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search records by ID, name, or polling station..." className="pl-9" />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Records</CardTitle>
-          <CardDescription>Authorized records are protected by strict access controls. Only users with appropriate permissions can view, search, or export records.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-2xl bg-muted/50 p-5 mb-5">
-              <ShieldCheck className="h-10 w-10 text-muted-foreground/60" />
-            </div>
-            <h3 className="text-lg font-semibold">Access Controlled</h3>
-            <p className="text-sm text-muted-foreground max-w-sm mt-1.5">
-              Record data is displayed based on your role and geographic assignment. Use the search bar above to find specific records.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <RecordsClient 
+        initialRecords={initialData} 
+        pagination={{ total: totalRecords, page: 1, limit: 10, totalPages: Math.ceil(totalRecords / 10) }} 
+      />
     </div>
   );
 }
