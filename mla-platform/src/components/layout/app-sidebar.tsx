@@ -48,10 +48,10 @@ export function AppSidebar() {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-2">
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1.5">
               {NAVIGATION.map((item) => {
                 const isActive =
                   pathname === item.href ||
@@ -75,19 +75,19 @@ export function AppSidebar() {
                           <SidebarMenuButton
                             tooltip={item.title}
                             className={cn(
-                              "font-medium",
+                              "font-medium transition-all duration-200 hover:bg-sidebar-accent/50",
                               (isActive || isChildActive) &&
-                                "bg-sidebar-accent text-sidebar-accent-foreground"
+                                "bg-sidebar-accent text-primary shadow-sm"
                             )}
                           />
                         }
                       >
-                        <item.icon className="h-4 w-4" />
+                        <item.icon className={cn("h-4 w-4", (isActive || isChildActive) && "text-primary")} />
                         <span>{item.title}</span>
                         <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <SidebarMenuSub>
+                        <SidebarMenuSub className="pl-4 border-l border-sidebar-border/50 ml-2 mt-1">
                           {item.children!.map((child) => {
                             const isSubActive =
                               pathname === child.href ||
@@ -96,6 +96,7 @@ export function AppSidebar() {
                               <SidebarMenuSubItem key={child.href}>
                                 <SidebarMenuSubButton
                                   isActive={isSubActive}
+                                  className={cn("transition-all duration-200 hover:text-primary hover:bg-transparent", isSubActive && "text-primary font-medium")}
                                   render={<Link href={child.href} />}
                                 >
                                   <child.icon className="h-3.5 w-3.5" />
@@ -115,10 +116,13 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       tooltip={item.title}
                       isActive={isActive}
-                      className="font-medium"
+                      className={cn(
+                        "font-medium transition-all duration-200 hover:bg-sidebar-accent/50",
+                        isActive && "bg-sidebar-accent text-primary shadow-sm"
+                      )}
                       render={<Link href={item.href} />}
                     >
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className={cn("h-4 w-4", isActive && "text-primary")} />
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

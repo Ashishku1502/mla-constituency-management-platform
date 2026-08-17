@@ -143,17 +143,17 @@ export default function DashboardPage() {
   const { stats, charts } = data;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-stagger-1 pb-10">
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-primary">Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           Constituency overview and operational insights
         </p>
       </div>
 
       {/* KPI Cards — Row 1 */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-stagger-2">
         <StatCard
           title="Total Records"
           value={stats.totalRecords}
@@ -183,7 +183,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards — Row 2 */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-stagger-3">
         <StatCard
           title="Active Volunteers"
           value={stats.volunteers}
@@ -215,7 +215,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Coverage Summary */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-stagger-4">
         <Card className="overflow-hidden">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
