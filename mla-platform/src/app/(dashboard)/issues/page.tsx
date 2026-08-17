@@ -29,7 +29,7 @@ export default async function IssuesPage() {
       <PageHeader
         title="Issues"
         description="Track and resolve constituency issues reported by the field team"
-        icon={AlertTriangle}
+        icon={<AlertTriangle className="h-5 w-5" />}
         action={{ label: "Report Issue", href: "/issues/add", icon: Plus }}
       />
 
@@ -64,7 +64,10 @@ export default async function IssuesPage() {
                   <TableCell>{issue.area.name}</TableCell>
                   <TableCell>{issue.dateReported}</TableCell>
                   <TableCell>
-                    <Badge variant={issue.priority === 'Critical' ? 'destructive' : issue.priority === 'High' ? 'destructive' : 'secondary'}>
+                    <Badge
+                      variant={issue.priority === 'Critical' ? 'destructive' : 'secondary'}
+                      className={issue.priority === 'High' ? 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400' : ''}
+                    >
                       {issue.priority}
                     </Badge>
                   </TableCell>

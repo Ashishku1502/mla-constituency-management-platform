@@ -11,7 +11,7 @@ export default function ConstituencyMapPage() {
       <PageHeader
         title="Constituency Map"
         description="Interactive map of the constituency with areas, polling stations, and activities"
-        icon={Map}
+        icon={<Map className="h-5 w-5" />}
       />
 
       <Card className="border-none shadow-sm h-[calc(100vh-140px)] min-h-[600px] overflow-hidden">

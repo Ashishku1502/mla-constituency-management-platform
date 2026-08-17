@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import bcrypt from "bcrypt";
 
 const createUserSchema = z.object({
   name: z.string().min(2),
@@ -32,8 +33,8 @@ export async function GET(req: Request) {
     }
     if (search) {
       whereClause.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" as const } },
+        { email: { contains: search, mode: "insensitive" as const } },
         { mobile: { contains: search } },
       ];
     }
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const passwordHash = "dummy_hash";
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
       data: {

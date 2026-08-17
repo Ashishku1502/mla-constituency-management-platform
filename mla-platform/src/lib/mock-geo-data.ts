@@ -143,3 +143,43 @@ export const pollingStationsGeoJSON = {
     }
   ]
 };
+
+// Existing Geographical Divisions (Polygons)
+export const divisionsGeoJSON = {
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      properties: { name: "North Division", type: "Geographical Division" },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [76.45, 31.28],
+            [76.58, 31.30],
+            [76.60, 31.25],
+            [76.47, 31.25],
+            [76.45, 31.28]
+          ]
+        ]
+      }
+    },
+    {
+      type: "Feature",
+      properties: { name: "South Division", type: "Geographical Division" },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [76.47, 31.25],
+            [76.60, 31.25],
+            [76.62, 31.22],
+            [76.54, 31.15],
+            [76.42, 31.18],
+            [76.47, 31.25]
+          ]
+        ]
+      }
+    }
+  ]
+};

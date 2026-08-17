@@ -65,7 +65,7 @@ export function WardsClient({ initialWards }: { initialWards: WardData[] }) {
                 <TableHead>Type</TableHead>
                 <TableHead className="hidden sm:table-cell">Area</TableHead>
                 <TableHead className="hidden md:table-cell">Population</TableHead>
-                <TableHead className="hidden md:table-cell">Polling Stations</TableHead>
+                <TableHead className="hidden md:table-cell">Area PS</TableHead>
                 <TableHead className="hidden lg:table-cell">Households</TableHead>
               </TableRow>
             </TableHeader>

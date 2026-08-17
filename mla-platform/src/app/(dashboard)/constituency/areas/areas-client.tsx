@@ -39,6 +39,7 @@ interface AreaData {
   name: string;
   code: string;
   population: number;
+  registeredVoters: number;
   status: string;
   householdCoverage: number;
   pollingStations: number;
@@ -52,9 +53,9 @@ interface ManagerData {
 }
 
 export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData[], managers: ManagerData[] }) {
+  const router = import("next/navigation").then(mod => mod.useRouter);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const filtered = initialAreas.filter((area) => {
     const matchesSearch =
@@ -73,7 +74,11 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
         icon={Building2}
         action={{
           label: "Add Area",
-          onClick: () => setShowCreateDialog(true),
+          onClick: () => {
+            if (typeof window !== "undefined") {
+              window.location.href = "/constituency/areas/add";
+            }
+          },
           icon: Plus,
         }}
       />
@@ -172,6 +177,7 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
                 <TableHead>Area Name</TableHead>
                 <TableHead>Code</TableHead>
                 <TableHead className="hidden md:table-cell">Population</TableHead>
+                <TableHead className="hidden lg:table-cell">Reg. Voters</TableHead>
                 <TableHead className="hidden sm:table-cell">Polling Stations</TableHead>
                 <TableHead className="hidden lg:table-cell">Manager</TableHead>
                 <TableHead className="hidden lg:table-cell">Coverage</TableHead>
@@ -192,6 +198,9 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
                   <TableCell className="font-mono text-xs">{area.code}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     {area.population.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell text-muted-foreground">
+                    {area.registeredVoters ? area.registeredVoters.toLocaleString() : "-"}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">{area.pollingStations}</TableCell>
                   <TableCell className="hidden lg:table-cell">
@@ -217,66 +226,6 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
         </CardContent>
       </Card>
 
-      {/* Create Area Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Create New Area</DialogTitle>
-            <DialogDescription>
-              Add a new area to the constituency. You can assign a manager and
-              polling stations after creation.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="area-name">Area Name</Label>
-                <Input id="area-name" placeholder="e.g., Anandpur Sahib North" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="area-code">Area Code</Label>
-                <Input id="area-code" placeholder="e.g., ASN-09" />
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="population">Population</Label>
-                <Input id="population" type="number" placeholder="0" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="manager">Area Manager</Label>
-                <Select>
-                  <SelectTrigger id="manager">
-                    <SelectValue placeholder="Select manager" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
-                    {managers.map(m => (
-                      <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Brief description of the area..."
-                rows={3}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setShowCreateDialog(false)}>
-              Create Area
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push && prisma db seed && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:setup": "prisma db push && prisma db seed"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -44,7 +45,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.15.13",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",

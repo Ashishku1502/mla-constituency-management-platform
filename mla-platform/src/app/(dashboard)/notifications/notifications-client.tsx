@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ElementType } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Bell, Check, CheckCheck, Activity, FileText, AlertTriangle, Users, Clock, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const iconMap: Record<string, React.ElementType> = {
+const iconMap: Record<string, ElementType> = {
   "Activity Reminder": Clock,
   "Report Submitted": FileText,
   "Issue Escalation": AlertTriangle,

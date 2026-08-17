@@ -4,10 +4,16 @@ import { z } from "zod";
 
 const areaSchema = z.object({
   name: z.string().min(2),
-  code: z.string().min(2),
-  population: z.number().int().positive(),
+  code: z.string().optional(),
+  population: z.coerce.number().int().nonnegative().default(0),
+  registeredVoters: z.coerce.number().int().nonnegative().default(0),
   status: z.enum(["Active", "Inactive"]).default("Active"),
   constituencyId: z.string(),
+  description: z.string().optional(),
+  geographicBoundary: z.string().optional(),
+  managerId: z.string().optional(),
+  pollingStationIds: z.array(z.string()).optional(),
+  wardIds: z.array(z.string()).optional(),
 });
 
 export async function GET(req: Request) {
@@ -29,8 +35,8 @@ export async function GET(req: Request) {
     }
     if (search) {
       whereClause.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { code: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" as const } },
+        { code: { contains: search, mode: "insensitive" as const } },
       ];
     }
 
@@ -87,7 +93,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, code, population, status, constituencyId } = result.data;
+    let { name, code, population, registeredVoters, status, constituencyId, description, geographicBoundary, managerId, pollingStationIds, wardIds } = result.data;
+
+    // Auto-generate code if missing
+    if (!code) {
+      code = name.substring(0, 3).toUpperCase() + "-" + Math.floor(1000 + Math.random() * 9000);
+    }
 
     // Check code unique
     const existingArea = await prisma.area.findUnique({
@@ -106,8 +117,28 @@ export async function POST(req: Request) {
         name,
         code,
         population,
+        registeredVoters,
         status,
         constituencyId,
+        description,
+        geographicBoundary,
+        ...(pollingStationIds && pollingStationIds.length > 0 && {
+          pollingStations: {
+            connect: pollingStationIds.map(id => ({ id }))
+          }
+        }),
+        ...(wardIds && wardIds.length > 0 && {
+          wards: {
+            connect: wardIds.map(id => ({ id }))
+          }
+        }),
+        ...(managerId && managerId !== "unassigned" && {
+          managers: {
+            create: {
+              userId: managerId
+            }
+          }
+        })
       },
     });
 

@@ -24,7 +24,7 @@ export async function GET() {
       prisma.pollingStation.count(),
       prisma.user.count({ where: { role: "Volunteer" } }),
       prisma.activity.count({ where: { status: "Completed" } }),
-      prisma.activity.count({ where: { status: "Pending" } }),
+      prisma.activity.count({ where: { status: { in: ["Draft", "Scheduled"] } } }),
       prisma.issue.count(),
       prisma.issue.count({ where: { status: "Resolved" } }),
     ]);

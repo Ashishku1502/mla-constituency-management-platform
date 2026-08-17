@@ -12,7 +12,17 @@ import {
   Popup,
   useMap
 } from "react-leaflet";
-import { EditControl } from "react-leaflet-draw";
+// EditControl needs to be required after window.L is set
+// so we don't import it at the top level
+let EditControl: any = null;
+if (typeof window !== "undefined") {
+  (window as any).L = L;
+  try {
+    EditControl = require("react-leaflet-draw").EditControl;
+  } catch (e) {
+    console.error("Failed to load react-leaflet-draw", e);
+  }
+}
 
 // Import Leaflet CSS
 import "leaflet/dist/leaflet.css";
@@ -131,6 +141,7 @@ export default function MapComponent() {
   const villagesGeoJSON = parseFeature("Village");
   const localitiesGeoJSON = parseFeature("Locality");
   const pollingStationsGeoJSON = parseFeature("PollingStation");
+  const divisionsGeoJSON = parseFeature("Division");
 
   // Flatten items for the interactive sidebar
   const sidebarItems = () => {
@@ -143,6 +154,12 @@ export default function MapComponent() {
     }
     if (pollingStationsGeoJSON) {
       pollingStationsGeoJSON.features.forEach((f: any) => items.push({ type: "Polling Station", name: f.properties.name, feature: f }));
+    }
+    if (localitiesGeoJSON) {
+      localitiesGeoJSON.features.forEach((f: any) => items.push({ type: "Locality", name: f.properties.name, feature: f }));
+    }
+    if (divisionsGeoJSON) {
+      divisionsGeoJSON.features.forEach((f: any) => items.push({ type: "Division", name: f.properties.name, feature: f }));
     }
     return items.filter(item => item.name?.toLowerCase().includes(search.toLowerCase()));
   };
@@ -190,6 +207,8 @@ export default function MapComponent() {
                 <div className={`p-2 rounded-md transition-colors ${
                   item.type === "Ward" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 group-hover:bg-green-200 dark:group-hover:bg-green-900/50" :
                   item.type === "Village" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50" :
+                  item.type === "Locality" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50" :
+                  item.type === "Division" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400 group-hover:bg-cyan-200 dark:group-hover:bg-cyan-900/50" :
                   "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50"
                 }`}>
                   {item.type === "Ward" ? <Building2 className="h-4 w-4" /> : item.type === "Village" ? <Home className="h-4 w-4" /> : <MapPin className="h-4 w-4" />}
@@ -251,20 +270,22 @@ export default function MapComponent() {
                     }}
                   />
                 )}
-                <EditControl
-                  position="topleft"
-                  onCreated={onCreated}
-                  onEdited={onEdited}
-                  onDeleted={onDeleted}
-                  draw={{
-                    circle: false,
-                    circlemarker: false,
-                    marker: false,
-                    polyline: false,
-                    rectangle: false,
-                    polygon: { allowIntersection: false, showArea: true },
-                  }}
-                />
+                {EditControl && (
+                  <EditControl
+                    position="topleft"
+                    onCreated={onCreated}
+                    onEdited={onEdited}
+                    onDeleted={onDeleted}
+                    draw={{
+                      circle: false,
+                      circlemarker: false,
+                      marker: false,
+                      polyline: false,
+                      rectangle: false,
+                      polygon: { allowIntersection: false, showArea: true },
+                    }}
+                  />
+                )}
               </FeatureGroup>
             </LayersControl.Overlay>
 
@@ -356,6 +377,71 @@ export default function MapComponent() {
                             <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
                           </div>
                           <p class="text-sm text-muted-foreground m-0">${feature.properties.address || 'Polling Station'}</p>
+                        </div>`,
+                        { className: "custom-popup" }
+                      );
+                    }
+                  }}
+                />
+              </LayersControl.Overlay>
+            )}
+
+            {localitiesGeoJSON && (
+              <LayersControl.Overlay name="Localities">
+                <GeoJSON
+                  data={localitiesGeoJSON}
+                  pointToLayer={(feature, latlng) => {
+                    return L.circleMarker(latlng, {
+                      radius: 8,
+                      fillColor: "#8b5cf6",
+                      color: "#fff",
+                      weight: 1,
+                      opacity: 1,
+                      fillOpacity: 0.8
+                    });
+                  }}
+                  onEachFeature={(feature, layer) => {
+                    if (feature.properties && feature.properties.name) {
+                      layer.bindPopup(
+                        `<div class="font-sans">
+                          <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
+                          <p class="text-sm text-muted-foreground m-0 mt-1">Locality</p>
+                        </div>`,
+                        { className: "custom-popup" }
+                      );
+                    }
+                  }}
+                />
+              </LayersControl.Overlay>
+            )}
+
+            {divisionsGeoJSON && (
+              <LayersControl.Overlay name="Geographical Divisions">
+                <GeoJSON
+                  data={divisionsGeoJSON}
+                  style={{
+                    color: "#0891b2",
+                    weight: 2,
+                    fillColor: "#06b6d4",
+                    fillOpacity: 0.25,
+                    dashArray: "4, 4"
+                  }}
+                  onEachFeature={(feature, layer) => {
+                    layer.on({
+                      mouseover: (e) => {
+                        const l = e.target;
+                        l.setStyle({ fillOpacity: 0.4, weight: 3, color: "#164e63" });
+                      },
+                      mouseout: (e) => {
+                        const l = e.target;
+                        l.setStyle({ fillOpacity: 0.25, weight: 2, color: "#0891b2" });
+                      }
+                    });
+                    if (feature.properties && feature.properties.name) {
+                      layer.bindPopup(
+                        `<div class="font-sans">
+                          <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
+                          <p class="text-sm text-muted-foreground m-0 mt-1">Geographical Division</p>
                         </div>`,
                         { className: "custom-popup" }
                       );

@@ -1,6 +1,4 @@
-"use client";
-
-import { type ReactNode } from "react";
+import { isValidElement, type ReactNode, type ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, type LucideIcon } from "lucide-react";
 import Link from "next/link";
@@ -8,7 +6,7 @@ import Link from "next/link";
 interface PageHeaderProps {
   title: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon | ComponentType<any> | ReactNode;
   action?: {
     label: string;
     href?: string;
@@ -32,7 +30,16 @@ export function PageHeader({
       <div className="flex items-center gap-3">
         {Icon && (
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Icon className="h-5 w-5" />
+            {isValidElement(Icon) ? (
+              // Already a rendered JSX element: icon={<Settings />}
+              Icon
+            ) : typeof Icon === "function" || (typeof Icon === "object" && Icon !== null && ("render" in (Icon as object) || "$$typeof" in (Icon as object))) ? (
+              // Component constructor (function) OR forwardRef component (object) like Lucide icons: icon={Settings}
+              // @ts-ignore
+              <Icon className="h-5 w-5" />
+            ) : (
+              Icon
+            )}
           </div>
         )}
         <div>

@@ -5,6 +5,7 @@ import {
   villagesGeoJSON,
   localitiesGeoJSON,
   pollingStationsGeoJSON,
+  divisionsGeoJSON,
 } from "@/lib/mock-geo-data";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,8 @@ export async function GET() {
     { name: "Wards", featureType: "Ward", geoJson: JSON.stringify(wardsGeoJSON) },
     { name: "Villages", featureType: "Village", geoJson: JSON.stringify(villagesGeoJSON) },
     { name: "Localities", featureType: "Locality", geoJson: JSON.stringify(localitiesGeoJSON) },
-    { name: "Polling Stations", featureType: "PollingStation", geoJson: JSON.stringify(pollingStationsGeoJSON) }
+    { name: "Polling Stations", featureType: "PollingStation", geoJson: JSON.stringify(pollingStationsGeoJSON) },
+    { name: "Geographical Divisions", featureType: "Division", geoJson: JSON.stringify(divisionsGeoJSON) }
   ]);
 }
 

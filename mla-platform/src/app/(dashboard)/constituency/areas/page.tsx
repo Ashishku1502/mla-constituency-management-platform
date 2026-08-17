@@ -30,6 +30,7 @@ export default async function AreasPage() {
       name: area.name,
       code: area.code,
       population: area.population,
+      registeredVoters: area.registeredVoters,
       status: area.status,
       householdCoverage: area.householdCoverage,
       pollingStations: area._count.pollingStations,
