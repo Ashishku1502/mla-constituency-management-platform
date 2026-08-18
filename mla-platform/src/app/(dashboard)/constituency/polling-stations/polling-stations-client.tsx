@@ -23,6 +23,8 @@ import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Vote, Search, Plus } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+
 interface PollingStationData {
   id: string;
   number: number;
@@ -35,6 +37,7 @@ interface PollingStationData {
 }
 
 export function PollingStationsClient({ initialStations }: { initialStations: PollingStationData[] }) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [areaFilter, setAreaFilter] = useState("all");
@@ -59,7 +62,7 @@ export function PollingStationsClient({ initialStations }: { initialStations: Po
         icon={Vote}
         action={{
           label: "Add Station",
-          onClick: () => {},
+          onClick: () => router.push("/constituency/polling-stations/add"),
           icon: Plus,
         }}
       />
