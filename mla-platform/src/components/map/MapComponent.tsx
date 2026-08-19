@@ -18,6 +18,7 @@ let EditControl: any = null;
 if (typeof window !== "undefined") {
   (window as any).L = L;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     EditControl = require("react-leaflet-draw").EditControl;
   } catch (e) {
     console.error("Failed to load react-leaflet-draw", e);
@@ -101,6 +102,7 @@ export default function MapComponent() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchFeatures();
   }, []);
 
@@ -168,9 +170,11 @@ export default function MapComponent() {
     const feature = item.feature;
     if (feature.geometry.type === "Point") {
       const [lng, lat] = feature.geometry.coordinates;
+      // eslint-disable-next-line react-hooks/purity
       setFlyTarget({ center: [lat, lng], timestamp: Date.now() });
     } else {
       const layer = L.geoJSON(feature);
+      // eslint-disable-next-line react-hooks/purity
       setFlyTarget({ bounds: layer.getBounds(), timestamp: Date.now() });
     }
   };

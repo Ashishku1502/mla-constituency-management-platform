@@ -3,10 +3,7 @@ export const dynamic = "force-dynamic";
 import prisma from "@/lib/prisma";
 import { PageHeader } from "@/components/shared/page-header";
 import { AlertTriangle, Plus } from "lucide-react";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { IssuesClient } from "./issues-client";
 
 export const metadata = {
   title: "Issues | MLA Platform",
@@ -14,15 +11,32 @@ export const metadata = {
 };
 
 export default async function IssuesPage() {
-  const issues = await prisma.issue.findMany({
-    include: {
-      reportedBy: true,
-      area: true,
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  });
+  const [issues, teamMembers] = await Promise.all([
+    prisma.issue.findMany({
+      include: {
+        reportedBy: true,
+        area: true,
+        assignedTo: true,
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }),
+    prisma.user.findMany({
+      where: {
+        role: { in: ["Team Leader", "Volunteer", "Area Manager"] },
+        status: "Active"
+      },
+      select: {
+        id: true,
+        name: true,
+        role: true,
+      },
+      orderBy: {
+        name: 'asc'
+      }
+    })
+  ]);
 
   return (
     <div className="space-y-6">
@@ -33,55 +47,7 @@ export default async function IssuesPage() {
         action={{ label: "Report Issue", href: "/issues/add", icon: Plus }}
       />
 
-      <div className="rounded-md border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Category</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Reported By</TableHead>
-              <TableHead>Area</TableHead>
-              <TableHead>Date Reported</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {issues.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
-                  No issues found. Report a new issue to get started.
-                </TableCell>
-              </TableRow>
-            ) : (
-              issues.map((issue) => (
-                <TableRow key={issue.id} className="cursor-pointer hover:bg-muted/50">
-                  <TableCell className="font-medium">{issue.category}</TableCell>
-                  <TableCell>
-                    <p className="text-sm line-clamp-2 max-w-md">{issue.description}</p>
-                  </TableCell>
-                  <TableCell>{issue.reportedBy.name}</TableCell>
-                  <TableCell>{issue.area.name}</TableCell>
-                  <TableCell>{issue.dateReported}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={issue.priority === 'Critical' ? 'destructive' : 'secondary'}
-                      className={issue.priority === 'High' ? 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400' : ''}
-                    >
-                      {issue.priority}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={issue.status === 'Resolved' || issue.status === 'Closed' ? 'default' : 'outline'}>
-                      {issue.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <IssuesClient issues={issues} teamMembers={teamMembers} />
     </div>
   );
 }

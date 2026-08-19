@@ -68,6 +68,13 @@ export async function POST(request: Request) {
             pollingStationId: pollingStationId || null,
           },
         });
+      } else if (role === "Area Manager") {
+        await tx.areaManager.create({
+          data: {
+            userId: user.id,
+            areaId,
+          },
+        });
       } else {
         throw new Error("Invalid role specified");
       }

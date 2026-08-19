@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 const issueSchema = z.object({
   category: z.string().min(1, "Category is required"),
   priority: z.string().min(1, "Priority is required"),
+  areaId: z.string().min(1, "Area is required"),
   description: z.string().min(10, "Please provide a more detailed description (min 10 chars)"),
   dateReported: z.string().min(1, "Date is required"),
 });
@@ -31,7 +32,7 @@ type IssueFormValues = z.infer<typeof issueSchema>;
 const CATEGORIES = ["Roads", "Water", "Electricity", "Drainage", "Sanitation", "Education", "Healthcare", "Transport", "Other"];
 const PRIORITIES = ["Low", "Medium", "High", "Critical"];
 
-export function IssueForm() {
+export function IssueForm({ areas }: { areas: { id: string; name: string; code: string }[] }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -46,12 +47,14 @@ export function IssueForm() {
     defaultValues: {
       category: "",
       priority: "Medium",
+      areaId: "",
       dateReported: new Date().toISOString().split("T")[0],
     },
   });
 
   const categoryValue = useWatch({ name: "category", control });
   const priorityValue = useWatch({ name: "priority", control });
+  const areaValue = useWatch({ name: "areaId", control });
 
   const onSubmit = async (data: IssueFormValues) => {
     setIsSubmitting(true);
@@ -69,6 +72,7 @@ export function IssueForm() {
       if (result.success) {
         toast.success("Issue reported successfully!");
         router.push("/issues");
+        router.refresh();
       } else {
         toast.error(result.error || "Failed to report issue");
       }
@@ -116,6 +120,23 @@ export function IssueForm() {
                 </SelectContent>
               </Select>
               {errors.priority && <p className="text-xs text-red-500">{errors.priority.message}</p>}
+            </div>
+
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="areaId">Area <span className="text-red-500">*</span></Label>
+              <Select value={areaValue} onValueChange={(val) => setValue("areaId", val as string, { shouldValidate: true })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select area" />
+                </SelectTrigger>
+                <SelectContent>
+                  {areas.map(area => (
+                    <SelectItem key={area.id} value={area.id}>
+                      {area.name} ({area.code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.areaId && <p className="text-xs text-red-500">{errors.areaId.message}</p>}
             </div>
 
             <div className="space-y-2 sm:col-span-2">

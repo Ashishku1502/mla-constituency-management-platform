@@ -15,6 +15,7 @@ import {
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { UserCheck, Search, Plus, Phone, MapPin, Calendar, Activity } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export interface AreaManagerData {
   id: string;
@@ -85,6 +86,7 @@ function TeamMemberCard({ member }: { member: AreaManagerData }) {
 }
 
 export function AreaManagersClient({ initialManagers }: { initialManagers: AreaManagerData[] }) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -100,7 +102,7 @@ export function AreaManagersClient({ initialManagers }: { initialManagers: AreaM
         title="Area Managers"
         description="Manage area managers and their geographic assignments"
         icon={UserCheck}
-        action={{ label: "Add Manager", onClick: () => {}, icon: Plus }}
+        action={{ label: "Add Manager", onClick: () => router.push("/team/area-managers/add"), icon: Plus }}
       />
 
       <Card>

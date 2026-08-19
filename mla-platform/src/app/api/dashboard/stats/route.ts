@@ -128,36 +128,54 @@ export async function GET() {
       }
     });
   } catch (error) {
-    console.error("Failed to fetch dashboard stats, using mock data:", error);
+    console.error("Failed to fetch dashboard stats, returning mock data:", error);
     return NextResponse.json({
       stats: {
         totalRecords: 12450,
-        totalHouseholds: 3240,
-        totalAreas: 15,
-        totalPollingStations: 45,
-        volunteers: 120,
-        completedActivities: 35,
-        pendingActivities: 12,
-        reportedIssues: 58,
-        resolvedIssues: 45,
-        householdCoverage: 65,
-        reportingCompliance: 82
+        totalHouseholds: 4200,
+        totalAreas: 24,
+        totalPollingStations: 145,
+        volunteers: 320,
+        completedActivities: 184,
+        pendingActivities: 42,
+        reportedIssues: 89,
+        resolvedIssues: 65,
+        householdCoverage: 68,
+        reportingCompliance: 85
       },
       charts: {
         activityCompletionData: [
-          { name: "Completed", value: 35, color: "#10b981" },
-          { name: "In Progress", value: 8, color: "#f59e0b" },
-          { name: "Pending", value: 12, color: "#6366f1" },
-          { name: "Overdue", value: 4, color: "#ef4444" },
+          { name: "Completed", value: 184, color: "#10b981" },
+          { name: "In Progress", value: 45, color: "#f59e0b" },
+          { name: "Pending", value: 42, color: "#6366f1" },
+          { name: "Overdue", value: 12, color: "#ef4444" },
         ],
         areaPerformanceData: [
-          { name: "NRT", fullName: "North Ward", activities: 14, households: 72, issues: 8 },
-          { name: "STH", fullName: "South Ward", activities: 9, households: 55, issues: 12 },
-          { name: "EST", fullName: "East Ward", activities: 12, households: 80, issues: 5 },
+          { name: "NTH", fullName: "North Block", activities: 45, households: 82, issues: 12 },
+          { name: "STH", fullName: "South Block", activities: 38, households: 76, issues: 8 },
+          { name: "EST", fullName: "East Block", activities: 52, households: 88, issues: 15 },
+          { name: "WST", fullName: "West Block", activities: 31, households: 64, issues: 22 },
+          { name: "CEN", fullName: "Central Zone", activities: 64, households: 92, issues: 5 },
+          { name: "RUR", fullName: "Rural Area 1", activities: 22, households: 45, issues: 18 },
         ],
-        monthlyActivityData: [{ month: "Aug", completed: 35, pending: 12, overdue: 4 }],
-        issueResolutionData: [{ month: "Aug", reported: 58, resolved: 45 }],
-        volunteerActivityData: [{ month: "Aug", active: 105, inactive: 15 }]
+        monthlyActivityData: [
+          { month: "May", completed: 85, pending: 20, overdue: 5 },
+          { month: "Jun", completed: 110, pending: 25, overdue: 8 },
+          { month: "Jul", completed: 145, pending: 30, overdue: 12 },
+          { month: "Aug", completed: 184, pending: 42, overdue: 12 },
+        ],
+        issueResolutionData: [
+          { month: "May", reported: 45, resolved: 38 },
+          { month: "Jun", reported: 55, resolved: 42 },
+          { month: "Jul", reported: 72, resolved: 60 },
+          { month: "Aug", reported: 89, resolved: 65 },
+        ],
+        volunteerActivityData: [
+          { month: "May", active: 180, inactive: 40 },
+          { month: "Jun", active: 220, inactive: 45 },
+          { month: "Jul", active: 280, inactive: 55 },
+          { month: "Aug", active: 320, inactive: 60 },
+        ]
       }
     });
   }

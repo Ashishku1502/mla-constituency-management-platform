@@ -143,7 +143,7 @@ export function AddAreaForm({ constituencyId, managers, pollingStations, wards }
 
               <div className="space-y-1.5">
                 <Label htmlFor="status">Status</Label>
-                <Select value={formData.status} onValueChange={v => setFormData(prev => ({ ...prev, status: v }))}>
+                <Select value={formData.status} onValueChange={v => setFormData(prev => ({ ...prev, status: v || "Active" }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Active">Active</SelectItem>
@@ -196,7 +196,7 @@ export function AddAreaForm({ constituencyId, managers, pollingStations, wards }
 
               <div className="space-y-1.5">
                 <Label htmlFor="manager">Assigned Area Manager</Label>
-                <Select value={formData.managerId} onValueChange={v => setFormData(prev => ({ ...prev, managerId: v }))}>
+                <Select value={formData.managerId} onValueChange={v => setFormData(prev => ({ ...prev, managerId: v || "unassigned" }))}>
                   <SelectTrigger><SelectValue placeholder="Select Area Manager" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="unassigned">Unassigned (Assign Later)</SelectItem>

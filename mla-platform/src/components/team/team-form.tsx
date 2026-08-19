@@ -30,7 +30,7 @@ const teamSchema = z.object({
 type TeamFormValues = z.infer<typeof teamSchema>;
 
 interface TeamFormProps {
-  role: "Team Leader" | "Volunteer";
+  role: "Team Leader" | "Volunteer" | "Area Manager";
   areas: { id: string; name: string }[];
   pollingStations?: { id: string; name: string; number: number }[];
 }
@@ -78,7 +78,9 @@ export function TeamForm({ role, areas, pollingStations = [] }: TeamFormProps) {
 
       if (result.success) {
         toast.success(`${role} added successfully!`);
-        if (role === "Team Leader") {
+        if (role === "Area Manager") {
+          router.push("/team/area-managers");
+        } else if (role === "Team Leader") {
           router.push("/team/team-leaders");
         } else {
           router.push("/team/volunteers");

@@ -299,6 +299,27 @@ async function main() {
     },
   });
 
+  // 18. Map Features
+  console.log("Creating map features...");
+  const { constituencyGeoJSON, wardsGeoJSON, villagesGeoJSON, localitiesGeoJSON, pollingStationsGeoJSON, divisionsGeoJSON } = await import("../src/lib/mock-geo-data");
+  
+  await prisma.mapFeature.deleteMany({});
+  
+  const mapFeatures = [
+    { name: "Constituency Boundary", featureType: "Constituency", geoJson: JSON.stringify(constituencyGeoJSON) },
+    { name: "Wards", featureType: "Ward", geoJson: JSON.stringify(wardsGeoJSON) },
+    { name: "Villages", featureType: "Village", geoJson: JSON.stringify(villagesGeoJSON) },
+    { name: "Localities", featureType: "Locality", geoJson: JSON.stringify(localitiesGeoJSON) },
+    { name: "Polling Stations", featureType: "PollingStation", geoJson: JSON.stringify(pollingStationsGeoJSON) },
+    { name: "Geographical Divisions", featureType: "Division", geoJson: JSON.stringify(divisionsGeoJSON) }
+  ];
+
+  for (const feature of mapFeatures) {
+    await prisma.mapFeature.create({
+      data: feature
+    });
+  }
+
   console.log("Seeding completed successfully!");
 }
 

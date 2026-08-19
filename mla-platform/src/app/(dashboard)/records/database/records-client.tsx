@@ -90,7 +90,7 @@ export function RecordsClient({ initialRecords, pagination: initialPagination }:
                 className="pl-9" 
               />
             </div>
-            <Select value={statusFilter} onValueChange={handleStatusChange}>
+            <Select value={statusFilter} onValueChange={(val) => handleStatusChange(val || "all")}>
               <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -199,7 +199,7 @@ export function RecordsClient({ initialRecords, pagination: initialPagination }:
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => setPage(p => Math.max(1, p - 1))} 
+            onClick={() => setPage((p: number) => Math.max(1, p - 1))} 
             disabled={page === 1 || loading}
           >
             <ChevronLeft className="h-4 w-4 mr-1" /> Previous
@@ -210,7 +210,7 @@ export function RecordsClient({ initialRecords, pagination: initialPagination }:
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))} 
+            onClick={() => setPage((p: number) => Math.min(totalPages, p + 1))} 
             disabled={page === totalPages || loading}
           >
             Next <ChevronRight className="h-4 w-4 ml-1" />

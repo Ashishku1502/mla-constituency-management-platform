@@ -35,7 +35,7 @@ export function PageHeader({
               Icon
             ) : typeof Icon === "function" || (typeof Icon === "object" && Icon !== null && ("render" in (Icon as object) || "$$typeof" in (Icon as object))) ? (
               // Component constructor (function) OR forwardRef component (object) like Lucide icons: icon={Settings}
-              // @ts-ignore
+              // @ts-expect-error Typescript can't infer this complex union
               <Icon className="h-5 w-5" />
             ) : (
               Icon

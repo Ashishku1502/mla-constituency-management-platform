@@ -13,6 +13,7 @@ import {
 import { PageHeader } from "@/components/shared/page-header";
 import { Home, Search, Plus } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface WardData {
   id: string;
@@ -33,13 +34,15 @@ export function WardsClient({ initialWards }: { initialWards: WardData[] }) {
       w.area.toLowerCase().includes(search.toLowerCase())
   );
 
+  const router = useRouter();
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Wards & Villages"
         description="Manage wards and villages within constituency areas"
         icon={Home}
-        action={{ label: "Add Ward/Village", onClick: () => {}, icon: Plus }}
+        action={{ label: "Add Ward/Village", onClick: () => router.push("/constituency/wards/add"), icon: Plus }}
       />
 
       <Card>

@@ -43,7 +43,7 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
         />
         
         <div className="print:hidden mt-4 sm:mt-0">
-          <Select value={dateRange} onValueChange={setDateRange}>
+          <Select value={dateRange} onValueChange={(val) => setDateRange(val || "all-time")}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Date Range" />
             </SelectTrigger>

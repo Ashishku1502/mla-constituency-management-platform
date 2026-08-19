@@ -1,6 +1,6 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 generator client {
   provider = "prisma-client-js"
@@ -149,11 +149,14 @@ model PollingStation {
   number       Int
   name         String
   address      String
+  location     String?  // Geo-coordinates
   areaId       String
   area         Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
   teamLeaderId String?
   teamLeader   TeamLeader? @relation(fields: [teamLeaderId], references: [id])
   recordCount  Int      @default(0)
+  voterCount   Int      @default(0)
+  voterListStatus String @default("Pending") // Status of list upload
   status       String   @default("Pending") // Validated, Pending, Error
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

@@ -5,25 +5,16 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
-    // Find or create default user and area for the demo
-    let area = await prisma.area.findFirst();
-    if (!area) {
-      let constituency = await prisma.constituency.findFirst();
-      if (!constituency) {
-        constituency = await prisma.constituency.create({
-          data: { name: "Default Constituency", code: "DEF-01", state: "State", population: 100000 }
-        });
-      }
-      area = await prisma.area.create({
-        data: { name: "Central Area", code: "CA-01", population: 50000, constituencyId: constituency.id }
-      });
-    }
-
+    // Find or create default user for the reporter if not passed
     let user = await prisma.user.findFirst();
     if (!user) {
       user = await prisma.user.create({
         data: { name: "Demo User", email: "demo@example.com", mobile: "1234567890", passwordHash: "hash" }
       });
+    }
+
+    if (!data.areaId) {
+      return NextResponse.json({ success: false, error: "Area is required" }, { status: 400 });
     }
 
     const issue = await prisma.issue.create({
@@ -33,7 +24,7 @@ export async function POST(req: NextRequest) {
         description: data.description,
         dateReported: data.dateReported,
         reportedById: user.id,
-        areaId: area.id,
+        areaId: data.areaId,
       }
     });
 
