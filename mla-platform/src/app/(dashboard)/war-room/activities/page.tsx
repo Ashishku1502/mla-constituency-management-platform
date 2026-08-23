@@ -1,28 +1,62 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { PageHeader } from "@/components/shared/page-header";
-import { Activity } from "lucide-react";
+import { WarRoomActivitiesClient } from "./war-room-activities-client";
 
 export const metadata = {
   title: "War Room Activities | MLA Platform",
-  description: "Track all ongoing election activities centrally from the War Room",
+  description: "Live tracking of activities and dynamic winning score calculation.",
 };
+
+const mockMetrics = {
+  winningPrediction: 30,
+  voterSentiment: 24,
+  activityExecution: 40,
+  completedActivities: 2,
+  totalActivitiesTarget: 5,
+  totalActivities: 5,
+  completed: 2,
+  pending: 3,
+  votersTagged: 5,
+};
+
+const mockActivities: any[] = [
+  {
+    id: "act-1",
+    name: "100 aadmi ko khane pe bulaye",
+    location: "Mustafabad (Demo) - Ward 2",
+    assignedTo: "vasu",
+    status: "running"
+  },
+  {
+    id: "act-2",
+    name: "vraksharopan",
+    location: "Mustafabad (Demo) - Ward 2",
+    assignedTo: "vasu",
+    status: "cancelled"
+  },
+  {
+    id: "act-3",
+    name: "100 aadmi ko khane pe bulaye",
+    location: "Mustafabad (Demo) - Ward 1",
+    assignedTo: "janu",
+    status: "created"
+  },
+  {
+    id: "act-4",
+    name: "vraksharopan",
+    location: "Mustafabad (Demo) - Ward 1",
+    assignedTo: "janu",
+    status: "completed"
+  },
+  {
+    id: "act-5",
+    name: "vraksharopan",
+    location: "Mustafabad (Demo) - Ward 1",
+    assignedTo: "janu",
+    status: "completed"
+  }
+];
 
 export default function WarRoomActivitiesPage() {
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="War Room Activities"
-        description="Track all ongoing election activities centrally from the War Room"
-        icon={<Activity className="h-5 w-5" />}
-      />
-
-      <Card className="min-h-[400px] flex items-center justify-center border-dashed">
-        <CardContent className="text-center text-muted-foreground flex flex-col items-center gap-2">
-          <Activity className="h-8 w-8 text-muted-foreground/50" />
-          <p className="text-lg font-medium">Activity Tracking coming soon</p>
-          <p className="text-sm max-w-sm">This module will display a centralized list of activities, surveys, and events.</p>
-        </CardContent>
-      </Card>
-    </div>
+    <WarRoomActivitiesClient metrics={mockMetrics} activities={mockActivities} />
   );
 }

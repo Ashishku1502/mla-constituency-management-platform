@@ -24,9 +24,12 @@ import {
   Sun,
   ChevronRight,
   Sparkles,
+  Palette,
+  Globe,
 } from "lucide-react";
 import { NAVIGATION } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 function useBreadcrumbs() {
   const pathname = usePathname();
@@ -64,14 +67,55 @@ function useBreadcrumbs() {
   return crumbs;
 }
 
+const THEMES = [
+  { id: "emerald", label: "Emerald", color: "bg-emerald-500" },
+  { id: "sapphire", label: "Sapphire", color: "bg-blue-500" },
+  { id: "violet", label: "Violet", color: "bg-purple-500" },
+  { id: "rose", label: "Rose", color: "bg-rose-500" },
+];
+
+const LANGUAGES = [
+  { id: "en", label: "English", short: "EN" },
+  { id: "hi", label: "हिंदी", short: "HI" },
+];
+
 export function AppHeader() {
   const crumbs = useBreadcrumbs();
   const [isDark, setIsDark] = useState(false);
+  const [activeTheme, setActiveTheme] = useState("emerald");
+  const [activeLanguage, setActiveLanguage] = useState("en");
   const unreadCount = 4;
+
+  useEffect(() => {
+    // Check initial dark mode
+    if (document.documentElement.classList.contains("dark")) {
+      setIsDark(true);
+    }
+    // Check initial theme
+    const savedTheme = localStorage.getItem("app-theme") || "emerald";
+    setActiveTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+
+    // Check initial language
+    const savedLanguage = localStorage.getItem("app-language") || "en";
+    setActiveLanguage(savedLanguage);
+  }, []);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle("dark");
+  };
+
+  const changeColorTheme = (themeId: string) => {
+    setActiveTheme(themeId);
+    document.documentElement.setAttribute("data-theme", themeId);
+    localStorage.setItem("app-theme", themeId);
+  };
+
+  const changeLanguage = (langId: string) => {
+    setActiveLanguage(langId);
+    localStorage.setItem("app-language", langId);
+    // In a real app with i18n, this would also trigger a route change or translation swap
   };
 
   return (
@@ -85,7 +129,7 @@ export function AppHeader() {
       <div className="pointer-events-none absolute top-0 left-0 right-0 h-px
                       bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
-      <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground transition-colors" />
+      <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-primary transition-colors" />
       <Separator orientation="vertical" className="h-5 bg-border/60" />
 
       {/* Mobile page title (visible only below sm breakpoint) */}
@@ -113,9 +157,9 @@ export function AppHeader() {
             </span>
           </span>
         ))}
-        {/* Gold accent dot for current page */}
+        {/* Accent dot for current page */}
         {crumbs.length > 0 && (
-          <span className="ml-1 h-1.5 w-1.5 rounded-full bg-[oklch(0.78_0.16_80)] animate-pulse" />
+          <span className="ml-1 h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
         )}
       </nav>
 
@@ -125,22 +169,96 @@ export function AppHeader() {
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground
-                     hover:bg-primary/8 transition-all duration-200"
+                     hover:bg-primary/10 transition-all duration-200"
         >
           <Search className="h-4 w-4" />
           <span className="sr-only">Search</span>
         </Button>
 
-        {/* Theme Toggle */}
+        {/* Language Selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary
+                           hover:bg-primary/10 transition-all duration-200 relative"
+              >
+                <Globe className="h-4 w-4" />
+                <span className="absolute -bottom-1 -right-1 text-[9px] font-bold bg-primary text-primary-foreground rounded px-0.5">
+                  {LANGUAGES.find((l) => l.id === activeLanguage)?.short}
+                </span>
+                <span className="sr-only">Language Option</span>
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end" className="w-36 rounded-xl border-border/60 shadow-xl shadow-black/10 p-1.5">
+            <DropdownMenuLabel className="text-xs font-semibold px-2 py-1.5 text-muted-foreground">
+              Select Language
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="mx-1 bg-border/60" />
+            {LANGUAGES.map((l) => (
+              <DropdownMenuItem
+                key={l.id}
+                onClick={() => changeLanguage(l.id)}
+                className={cn(
+                  "rounded-lg cursor-pointer text-sm gap-2.5 px-2 py-1.5 transition-colors",
+                  activeLanguage === l.id && "bg-primary/10 font-semibold text-primary"
+                )}
+              >
+                {l.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Color Theme Selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary
+                           hover:bg-primary/10 transition-all duration-200"
+              >
+                <Palette className="h-4 w-4" />
+                <span className="sr-only">Color Theme</span>
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end" className="w-40 rounded-xl border-border/60 shadow-xl shadow-black/10 p-1.5">
+            <DropdownMenuLabel className="text-xs font-semibold px-2 py-1.5 text-muted-foreground">
+              Color Theme
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="mx-1 bg-border/60" />
+            {THEMES.map((t) => (
+              <DropdownMenuItem
+                key={t.id}
+                onClick={() => changeColorTheme(t.id)}
+                className={cn(
+                  "rounded-lg cursor-pointer text-sm gap-2.5 px-2 py-1.5 transition-colors",
+                  activeTheme === t.id && "bg-primary/10 font-semibold text-primary"
+                )}
+              >
+                <span className={cn("h-3 w-3 rounded-full shadow-sm ring-1 ring-border", t.color)} />
+                {t.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Dark Mode Toggle */}
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground
-                     hover:bg-primary/8 transition-all duration-200"
+          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary
+                     hover:bg-primary/10 transition-all duration-200"
           onClick={toggleTheme}
         >
           {isDark ? (
-            <Sun className="h-4 w-4" />
+            <Sun className="h-4 w-4 text-amber-400" />
           ) : (
             <Moon className="h-4 w-4" />
           )}
@@ -152,18 +270,18 @@ export function AppHeader() {
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground
-                     hover:bg-primary/8 relative transition-all duration-200"
+                     hover:bg-primary/10 relative transition-all duration-200"
         >
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
             <>
               {/* Ping animation ring */}
               <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-[oklch(0.62_0.2_25)] opacity-60 animate-ping" />
+                <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-60 animate-ping" />
               </span>
               <Badge className="absolute -top-0.5 -right-0.5 h-4 min-w-4 rounded-full px-1
                                 text-[10px] font-bold
-                                bg-gradient-to-br from-[oklch(0.62_0.2_25)] to-[oklch(0.55_0.24_20)]
+                                bg-gradient-to-br from-destructive to-destructive/80
                                 text-white border-2 border-background
                                 flex items-center justify-center shadow-sm">
                 {unreadCount}
@@ -181,14 +299,12 @@ export function AppHeader() {
             render={
               <Button
                 variant="ghost"
-                className="h-8 gap-2 px-2 rounded-lg hover:bg-primary/8 transition-all duration-200"
+                className="h-8 gap-2 px-2 rounded-lg hover:bg-primary/10 transition-all duration-200"
               />
             }
           >
-            <Avatar className="h-6 w-6 ring-2 ring-[oklch(0.78_0.16_80/0.6)] ring-offset-1 ring-offset-background transition-all duration-200">
-              <AvatarFallback className="text-[10px] font-bold
-                                         bg-gradient-to-br from-[oklch(0.78_0.16_80)] to-[oklch(0.72_0.18_55)]
-                                         text-[oklch(0.14_0.08_75)]">
+            <Avatar className="h-6 w-6 ring-2 ring-primary/40 ring-offset-1 ring-offset-background transition-all duration-200">
+              <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-primary to-primary/60 text-primary-foreground">
                 AS
               </AvatarFallback>
             </Avatar>
@@ -199,28 +315,26 @@ export function AppHeader() {
           <DropdownMenuContent align="end" className="w-52 rounded-xl border-border/60 shadow-xl shadow-black/10 p-1.5">
             <DropdownMenuLabel className="font-normal px-3 py-2">
               <div className="flex items-center gap-2.5">
-                <Avatar className="h-8 w-8 ring-2 ring-[oklch(0.78_0.16_80/0.5)]">
-                  <AvatarFallback className="text-xs font-bold
-                                              bg-gradient-to-br from-[oklch(0.78_0.16_80)] to-[oklch(0.72_0.18_55)]
-                                              text-[oklch(0.14_0.08_75)]">
+                <Avatar className="h-8 w-8 ring-2 ring-primary/40">
+                  <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-primary to-primary/60 text-primary-foreground">
                     AS
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
                   <p className="text-sm font-semibold">Amarinder Singh</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Sparkles className="h-2.5 w-2.5 text-[oklch(0.78_0.16_80)]" />
+                    <Sparkles className="h-2.5 w-2.5 text-primary" />
                     Candidate
                   </p>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="mx-1 bg-border/60" />
-            <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2">
+            <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 hover:bg-primary/10 hover:text-primary">
               <User className="h-4 w-4 text-muted-foreground" />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2">
+            <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 hover:bg-primary/10 hover:text-primary">
               <Settings className="h-4 w-4 text-muted-foreground" />
               Settings
             </DropdownMenuItem>

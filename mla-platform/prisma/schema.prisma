@@ -352,6 +352,25 @@ model AuditLog {
   createdAt DateTime @default(now())
 }
 
+// ─── Village Profile (Gram Panchayat) ──────────────────────────────────────────
+
+model VillageProfile {
+  id                String   @id @default(uuid())
+  gramPanchayatNaam String
+  village           String
+  block             String
+  district          String
+  state             String   @default("Uttar Pradesh")
+  pinCode           String
+  population        Int      @default(0)
+  totalHouseholds   Int      @default(0)
+  pradhanNaam       String
+  pradhanContact    String
+  status            String   @default("Active") // Active, Inactive
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
 // ─── Candidate Profile ──────────────────────────────────────────────────────────
 
 model CandidateProfile {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, ShieldAlert, UserPlus, CheckCircle2 } from "lucide-react";
+import { MoreHorizontal, ShieldAlert, UserPlus, CheckCircle2, QrCode } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +33,15 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
   const [newStatus, setNewStatus] = useState("");
   const [newAssignee, setNewAssignee] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isQrDialogOpen, setIsQrDialogOpen] = useState(false);
+  const [selectedWardForQr, setSelectedWardForQr] = useState("");
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+
+  const generateQR = () => {
+    if (!selectedWardForQr) return;
+    const url = `${window.location.origin}/public/report-issue/${selectedWardForQr}`;
+    setQrCodeData(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`);
+  };
 
   const handleUpdate = async (type: "status" | "assignee") => {
     if (!selectedIssue) return;
@@ -65,8 +74,15 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
   };
 
   return (
-    <div className="rounded-md border bg-card">
-      <Table>
+    <div className="space-y-6">
+      <div className="flex justify-end mb-4">
+        <Button onClick={() => setIsQrDialogOpen(true)} variant="outline" className="gap-2">
+          <QrCode className="h-4 w-4" />
+          Generate Ward QR Code
+        </Button>
+      </div>
+      <div className="rounded-md border bg-card">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Category</TableHead>
@@ -160,6 +176,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
           )}
         </TableBody>
       </Table>
+    </div>
 
       {/* Status Dialog */}
       <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
@@ -222,6 +239,53 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
             <Button onClick={() => handleUpdate("assignee")} disabled={isUpdating || newAssignee === (selectedIssue?.assignedToId || "unassigned")}>
               {isUpdating ? "Saving..." : "Assign Member"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Dialog */}
+      <Dialog open={isQrDialogOpen} onOpenChange={setIsQrDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Generate Issue Reporting QR Code</DialogTitle>
+            <DialogDescription>
+              Select a ward to generate a unique QR code. Print and place this at key locations so the public can report issues directly.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <Select value={selectedWardForQr} onValueChange={(v) => { setSelectedWardForQr(v); setQrCodeData(null); }}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Ward / Area" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="w1">Ward 1A - North Zone</SelectItem>
+                <SelectItem value="w2">Ward 1B - North Zone</SelectItem>
+                <SelectItem value="w3">Ward 2A - South Zone</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {qrCodeData && (
+              <div className="flex flex-col items-center justify-center p-4 bg-muted/20 rounded-lg space-y-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={qrCodeData} alt="Ward QR Code" className="w-48 h-48 rounded shadow-sm" />
+                <p className="text-xs text-muted-foreground text-center">Scan to report an issue for the selected ward.</p>
+                <Button variant="outline" className="w-full" onClick={() => {
+                  toast.success("QR Code saved for printing");
+                  setIsQrDialogOpen(false);
+                }}>
+                  Save for Printing
+                </Button>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            {!qrCodeData ? (
+              <Button onClick={generateQR} disabled={!selectedWardForQr} className="w-full">
+                Generate QR
+              </Button>
+            ) : (
+              <Button variant="ghost" onClick={() => setIsQrDialogOpen(false)} className="w-full">Close</Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

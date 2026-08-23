@@ -4,8 +4,15 @@ import { PollingStationsClient } from "./polling-stations-client";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Polling Stations | MLA Platform",
-  description: "Manage polling station information and record assignments",
+  title: "Polling Station Activities | MLA Platform",
+  description: "Meeting, Training, Rally aur Community Events — Ward-wise Volunteer assign karke poora record rakhein.",
+};
+
+const activityMetrics = {
+  totalActivities: 5,
+  inProgress: 1,
+  completed: 2,
+  cancelled: 1,
 };
 
 export default async function PollingStationsPage() {
@@ -34,7 +41,7 @@ export default async function PollingStationsPage() {
       status: ps.status,
     }));
 
-    return <PollingStationsClient initialStations={formattedStations} />;
+    return <PollingStationsClient initialStations={formattedStations} metrics={activityMetrics} />;
   } catch (error) {
     console.warn("Database connection error on PollingStations. Falling back to mock data.");
     const mockStations = [
@@ -45,7 +52,7 @@ export default async function PollingStationsPage() {
     ];
 
     return (
-      <PollingStationsClient initialStations={mockStations} />
+      <PollingStationsClient initialStations={mockStations} metrics={activityMetrics} />
     );
   }
 }

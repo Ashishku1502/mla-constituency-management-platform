@@ -7,7 +7,8 @@ import {
   TileLayer,
   Marker,
   Popup,
-  GeoJSON
+  GeoJSON,
+  Circle
 } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -25,7 +26,7 @@ const redIcon = createIcon("#ef4444"); // Critical
 const amberIcon = createIcon("#f59e0b"); // High/Medium
 const blueIcon = createIcon("#3b82f6"); // Ground Report
 
-export default function WarRoomMap() {
+export default function WarRoomMap({ filters }: { filters?: any }) {
   const [isMounted, setIsMounted] = useState(false);
   const [markers, setMarkers] = useState<any[]>([]);
   const [constituencyBoundary, setConstituencyBoundary] = useState<any>(null);
@@ -67,11 +68,13 @@ export default function WarRoomMap() {
 
   if (!isMounted) return <div className="h-full w-full flex items-center justify-center bg-muted/20">Loading Map...</div>;
 
+  const showHeatmap = !filters || filters.area === "all";
+
   return (
     <div className="h-full w-full relative z-0">
       <MapContainer
         center={mapCenter}
-        zoom={11}
+        zoom={filters?.station && filters.station !== 'all' ? 14 : (filters?.area && filters.area !== 'all' ? 12 : 11)}
         style={{ height: "100%", width: "100%", zIndex: 0 }}
       >
         <TileLayer
@@ -89,6 +92,26 @@ export default function WarRoomMap() {
               dashArray: "5, 5"
             }}
           />
+        )}
+        
+        {/* Mock Heatmap for performance (Alerts vs Well-maintained) */}
+        {showHeatmap && (
+          <>
+            <Circle 
+              center={[mapCenter[0] + 0.02, mapCenter[1] - 0.02]} 
+              pathOptions={{ fillColor: '#ef4444', color: 'transparent', fillOpacity: 0.4 }} 
+              radius={1500} 
+            >
+              <Popup>Alert Zone: High issues, low activity</Popup>
+            </Circle>
+            <Circle 
+              center={[mapCenter[0] - 0.03, mapCenter[1] + 0.04]} 
+              pathOptions={{ fillColor: '#10b981', color: 'transparent', fillOpacity: 0.4 }} 
+              radius={2000} 
+            >
+              <Popup>Well-Maintained Zone: High performance</Popup>
+            </Circle>
+          </>
         )}
 
         {markers.map(m => {

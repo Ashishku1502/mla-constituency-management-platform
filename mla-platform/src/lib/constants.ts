@@ -213,14 +213,19 @@ export const NAVIGATION: NavItem[] = [
       { title: "Map", href: "/constituency/map", icon: Map },
       { title: "Areas", href: "/constituency/areas", icon: Building2 },
       {
+        title: "Area Division",
+        href: "/constituency/area-division",
+        icon: GitBranch,
+      },
+      {
         title: "Polling Stations",
         href: "/constituency/polling-stations",
         icon: Vote,
       },
       {
-        title: "Wards / Villages",
+        title: "Wards",
         href: "/constituency/wards",
-        icon: Home,
+        icon: MapPin,
       },
     ],
   },

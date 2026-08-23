@@ -7,4 +7,6 @@ const WarRoomMap = dynamic(() => import("./WarRoomMap"), {
   loading: () => <div className="h-full w-full bg-muted/20 flex items-center justify-center">Loading Map...</div>,
 });
 
-export default WarRoomMap;
+export default function WarRoomMapDynamic({ filters }: { filters?: any }) {
+  return <WarRoomMap filters={filters} />;
+}
