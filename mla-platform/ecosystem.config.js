@@ -5,20 +5,21 @@ module.exports = {
   apps: [
     {
       name: "mla-platform",          // App ka naam PM2 dashboard mein
-      script: "node",
-      args: ".next/standalone/server.js",
-      cwd: "/var/www/mla-platform",  // VPS pe jo path hoga usse change karo
-      instances: 1,                   // 1 instance (VPS resources ke hisaab se badha sakte ho)
-      autorestart: true,              // Crash hone pe auto-restart
+      script: "server.js",           // Next.js standalone server (cwd mein hi hoga)
+      cwd: "/var/www/mla-platform",  // VPS pe deploy path
+      instances: 1,                  // 1 instance (KVM 1 plan ke liye theek hai)
+      autorestart: true,             // Crash hone pe auto-restart
       watch: false,
-      max_memory_restart: "500M",    // 500MB se zyada memory use ho to restart
-      env: {
+      max_memory_restart: "400M",    // 400MB se zyada memory pe restart
+      env_production: {
         NODE_ENV: "production",
         PORT: 3000,
+        HOSTNAME: "0.0.0.0",
       },
       error_file: "./logs/err.log",
       out_file: "./logs/out.log",
       log_date_format: "YYYY-MM-DD HH:mm:ss",
+      merge_logs: true,
     },
   ],
 };

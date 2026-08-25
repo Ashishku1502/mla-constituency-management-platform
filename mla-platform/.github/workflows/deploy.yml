@@ -35,23 +35,35 @@ jobs:
           NODE_ENV: production
         run: npm run build
 
-      - name: 📤 Deploy to VPS via SSH
+      - name: 📦 Prepare Deployment Package
+        run: |
+          mkdir -p deploy_package
+          # Copy standalone build
+          cp -r mla-platform/.next/standalone/. deploy_package/
+          # Copy static assets into the right place
+          mkdir -p deploy_package/.next/static
+          cp -r mla-platform/.next/static/. deploy_package/.next/static/
+          # Copy public folder
+          cp -r mla-platform/public deploy_package/public
+          # Copy PM2 config
+          cp mla-platform/ecosystem.config.js deploy_package/
+          # Copy prisma schema for migrations
+          mkdir -p deploy_package/prisma
+          cp mla-platform/prisma/schema.prisma deploy_package/prisma/
+          echo "📦 Package contents:"
+          ls -la deploy_package/
+
+      - name: 📤 Upload to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
-          source: |
-            mla-platform/.next/standalone/
-            mla-platform/.next/static/
-            mla-platform/public/
-            mla-platform/ecosystem.config.js
-            mla-platform/prisma/schema.prisma
-          target: /tmp/mla-deploy
-          strip_components: 1
+          source: "deploy_package"
+          target: "/tmp/"
 
-      - name: 🔄 Restart App on VPS
+      - name: 🔄 Deploy & Restart App on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -59,29 +71,49 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
           script: |
-            # Files move karo
-            sudo rm -rf /var/www/mla-platform/.next
-            sudo rm -rf /var/www/mla-platform/public
+            set -e
 
-            sudo mkdir -p /var/www/mla-platform/.next
-            sudo cp -r /tmp/mla-deploy/mla-platform/.next/standalone/. /var/www/mla-platform/
-            sudo mkdir -p /var/www/mla-platform/.next/static
-            sudo cp -r /tmp/mla-deploy/mla-platform/.next/static/. /var/www/mla-platform/.next/static/
-            sudo cp -r /tmp/mla-deploy/mla-platform/public/. /var/www/mla-platform/public/
-            sudo cp /tmp/mla-deploy/mla-platform/ecosystem.config.js /var/www/mla-platform/
+            echo "🚀 Starting deployment..."
+
+            # Backup current app (for quick rollback)
+            if [ -d "/var/www/mla-platform/server.js" ]; then
+              sudo cp /var/www/mla-platform/server.js /tmp/server.js.bak 2>/dev/null || true
+            fi
+
+            # Ensure target directory exists
+            sudo mkdir -p /var/www/mla-platform
             sudo chown -R $USER:$USER /var/www/mla-platform
 
-            # Prisma migrate (database update)
-            cd /var/www/mla-platform
-            export DATABASE_URL="${{ secrets.DATABASE_URL }}"
-            npx prisma db push --skip-generate || echo "Prisma push skipped"
+            # Deploy new files (preserving .env.production)
+            rsync -av --delete \
+              --exclude='.env.production' \
+              --exclude='logs/' \
+              /tmp/deploy_package/ /var/www/mla-platform/
 
-            # PM2 restart
-            mkdir -p logs
-            pm2 restart mla-platform 2>/dev/null || pm2 start ecosystem.config.js
+            # Ensure logs directory exists
+            mkdir -p /var/www/mla-platform/logs
+
+            # Load env and run prisma migration
+            cd /var/www/mla-platform
+            if [ -f ".env.production" ]; then
+              export $(grep -v '^#' .env.production | xargs)
+              echo "✅ Loaded .env.production"
+              npx prisma db push --skip-generate 2>/dev/null && echo "✅ DB migration done" || echo "⚠️ DB push skipped"
+            else
+              echo "⚠️ .env.production not found — skipping DB migration"
+            fi
+
+            # PM2 restart or start
+            if pm2 list | grep -q "mla-platform"; then
+              pm2 restart mla-platform --update-env
+              echo "✅ PM2 restarted"
+            else
+              pm2 start ecosystem.config.js
+              echo "✅ PM2 started"
+            fi
             pm2 save
 
-            # Cleanup
-            sudo rm -rf /tmp/mla-deploy
+            # Cleanup temp files
+            sudo rm -rf /tmp/deploy_package
 
-            echo "✅ Deployment complete!"
+            echo "🎉 Deployment complete! App running at port 3000"

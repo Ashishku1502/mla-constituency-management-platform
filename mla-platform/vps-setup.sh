@@ -39,6 +39,12 @@ echo ""
 echo "🔒 Step 5: Certbot (SSL) install kar rahe hain..."
 sudo apt install -y certbot python3-certbot-nginx
 
+# ── Step 5b: rsync Install (GitHub Actions deploy ke liye) ──
+echo ""
+echo "🔄 Step 5b: rsync install kar rahe hain (deploy ke liye zaroori)..."
+sudo apt install -y rsync
+
+
 # ── Step 6: App Folder Create ────────────────────────────
 echo ""
 echo "📁 Step 6: App folder bana rahe hain..."
