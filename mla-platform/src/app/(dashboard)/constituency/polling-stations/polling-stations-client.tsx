@@ -144,7 +144,7 @@ export function PollingStationsClient({ metrics }: PollingStationsClientProps) {
                 <p className="text-sm text-muted-foreground">Pehle se configured framework ka upyog karein.</p>
                 
                 <div className="space-y-3 pt-2">
-                  <Select value={selectedExistingActivity} onValueChange={setSelectedExistingActivity}>
+                  <Select value={selectedExistingActivity} onValueChange={(val) => setSelectedExistingActivity(val ?? "")}>
                     <SelectTrigger className="w-full h-12 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/50 transition-colors">
                       <SelectValue placeholder="Vraksharopan (Tree Plantation)" />
                     </SelectTrigger>

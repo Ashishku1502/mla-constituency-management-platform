@@ -21,7 +21,7 @@ export function WarRoomMapClient() {
           icon={<Radio className="h-5 w-5 text-red-500 animate-pulse" />}
         />
         <div className="flex flex-col sm:flex-row gap-3">
-          <Select value={area} onValueChange={setArea}>
+          <Select value={area} onValueChange={(val) => setArea(val ?? "all")}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Area" />
             </SelectTrigger>
@@ -31,7 +31,7 @@ export function WarRoomMapClient() {
               <SelectItem value="south">South Zone</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={station} onValueChange={setStation} disabled={area === "all"}>
+          <Select value={station} onValueChange={(val) => setStation(val ?? "all")} disabled={area === "all"}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Polling Station" />
             </SelectTrigger>
@@ -41,7 +41,7 @@ export function WarRoomMapClient() {
               <SelectItem value="ps2">PS 2 - Library</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={board} onValueChange={setBoard}>
+          <Select value={board} onValueChange={(val) => setBoard(val ?? "all")}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Board/Category" />
             </SelectTrigger>
@@ -52,6 +52,7 @@ export function WarRoomMapClient() {
             </SelectContent>
           </Select>
         </div>
+
       </div>
 
       <Card className="border-none shadow-sm h-[calc(100vh-140px)] min-h-[600px] overflow-hidden">

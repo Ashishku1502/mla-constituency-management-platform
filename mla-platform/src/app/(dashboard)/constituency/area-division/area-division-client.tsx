@@ -81,7 +81,7 @@ export function AreaDivisionClient() {
               <p className="text-sm text-muted-foreground">Select the basis for allocating areas</p>
             </div>
           </div>
-          <Select value={allocationMode} onValueChange={setAllocationMode}>
+          <Select value={allocationMode} onValueChange={(val) => setAllocationMode(val ?? "voters")}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Basis" />
             </SelectTrigger>
@@ -110,7 +110,7 @@ export function AreaDivisionClient() {
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <Select onValueChange={(val) => handleAllocate(ward.id, val)}>
+                  <Select onValueChange={(val) => val && handleAllocate(ward.id, val)}>
                     <SelectTrigger className="h-8 text-xs">
                       <SelectValue placeholder="Assign to Area..." />
                     </SelectTrigger>

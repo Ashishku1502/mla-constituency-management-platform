@@ -253,7 +253,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
-            <Select value={selectedWardForQr} onValueChange={(v) => { setSelectedWardForQr(v); setQrCodeData(null); }}>
+            <Select value={selectedWardForQr} onValueChange={(v) => { setSelectedWardForQr(v ?? ""); setQrCodeData(null); }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Ward / Area" />
               </SelectTrigger>
