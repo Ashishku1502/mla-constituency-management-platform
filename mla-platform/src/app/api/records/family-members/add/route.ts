@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: familyMember });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to add family member:", error);
     return NextResponse.json(
       { success: false, error: error.message || "Internal server error" },
@@ -43,3 +43,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

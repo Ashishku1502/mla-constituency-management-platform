@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
     }));
 
     return NextResponse.json({ success: true, data: formattedAreas });
-  } catch (error: any) {
+  } catch (error) {
     console.warn("Database read failed on Vercel, returning mock data.");
     const mockAreas = [
       { id: "area-1", name: "Downtown Central", code: "DTC", population: 120000, status: "Active", householdCoverage: 85, manager: "John Doe", managerId: "user-1" },
@@ -163,7 +163,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, data: area }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST area error:", error);
     return NextResponse.json(
       { success: false, message: "An internal server error occurred." },
@@ -171,3 +171,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

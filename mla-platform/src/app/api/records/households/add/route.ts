@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, household }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating household:", error);
 
     // Handle Prisma specific unique constraint errors or foreign key errors
@@ -77,3 +77,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

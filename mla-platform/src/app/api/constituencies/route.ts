@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -21,7 +21,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, data: constituencies });
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET constituencies error:", error);
     return NextResponse.json(
       { success: false, message: "An internal server error occurred." },
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: constituency }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST constituency error:", error);
     return NextResponse.json(
       { success: false, message: "An internal server error occurred." },
@@ -57,3 +57,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

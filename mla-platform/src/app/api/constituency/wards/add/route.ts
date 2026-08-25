@@ -24,15 +24,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, ward }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to create ward:", error);
-    
-    // In demo mode on Vercel, SQLite might be read-only.
-    // We return a mock success to keep the demo functional.
-    return NextResponse.json({ 
-      success: true, 
-      ward: { id: "mock-" + Date.now(), name: "Mock Ward", type: "Ward" },
-      demoFallback: true
-    }, { status: 201 });
+    return NextResponse.json(
+      { success: false, error: "Failed to create ward" },
+      { status: 500 }
+    );
   }
 }

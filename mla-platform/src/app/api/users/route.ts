@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ success: true, data: users });
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET users error:", error);
     return NextResponse.json(
       { success: false, message: "An internal server error occurred." },
@@ -134,7 +134,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, data: { id: user.id, name: user.name, role: user.role } }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST user error:", error);
     return NextResponse.json(
       { success: false, message: "An internal server error occurred." },
@@ -142,3 +142,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

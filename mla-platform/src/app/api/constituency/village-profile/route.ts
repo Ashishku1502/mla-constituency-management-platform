@@ -59,16 +59,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, profile }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to create village profile:", error);
-    // Demo mode fallback
     return NextResponse.json(
-      {
-        success: true,
-        profile: { id: "mock-" + Date.now() },
-        demoFallback: true,
-      },
-      { status: 201 }
+      { success: false, error: "Failed to create village profile" },
+      { status: 500 }
     );
   }
 }

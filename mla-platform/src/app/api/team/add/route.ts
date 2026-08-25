@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: result });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to add team member:", error);
     return NextResponse.json(
       { success: false, error: error.message || "Internal server error" },
@@ -91,3 +91,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

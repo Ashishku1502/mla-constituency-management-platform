@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to fetch records, using mock data:", error);
     return NextResponse.json({
       success: true,
@@ -63,3 +63,4 @@ export async function GET(request: Request) {
     });
   }
 }
+
