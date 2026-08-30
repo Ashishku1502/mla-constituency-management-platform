@@ -97,10 +97,8 @@ jobs:
             # Load env and run prisma migration
             cd /var/www/mla-platform
             
-            # Install and generate prisma client on the VPS
-            echo "📦 Installing Prisma Client..."
-            npm install @prisma/client prisma --no-save
-            npx prisma generate
+            # We do NOT run npm install @prisma/client here because it breaks the Next.js standalone node_modules!
+            # The standalone build already includes the correct Prisma engine.
             
             if [ -f ".env.production" ]; then
               export $(grep -v '^#' .env.production | xargs)
