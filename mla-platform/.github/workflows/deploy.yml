@@ -47,9 +47,10 @@ jobs:
           cp -r mla-platform/public deploy_package/public
           # Copy PM2 config
           cp mla-platform/ecosystem.config.js deploy_package/
-          # Copy prisma schema for migrations
+          # Copy prisma schema and seed script for migrations/seeding
           mkdir -p deploy_package/prisma
           cp mla-platform/prisma/schema.prisma deploy_package/prisma/
+          cp mla-platform/prisma/seed.ts deploy_package/prisma/ 2>/dev/null || true
           echo "📦 Package contents:"
           ls -la deploy_package/
 
@@ -95,6 +96,12 @@ jobs:
 
             # Load env and run prisma migration
             cd /var/www/mla-platform
+            
+            # Install and generate prisma client on the VPS
+            echo "📦 Installing Prisma Client..."
+            npm install @prisma/client prisma --no-save
+            npx prisma generate
+            
             if [ -f ".env.production" ]; then
               export $(grep -v '^#' .env.production | xargs)
               echo "✅ Loaded .env.production"
