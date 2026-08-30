@@ -54,6 +54,9 @@ fs.cpSync(path.join(__dirname, 'prisma', 'schema.prisma'), path.join(prismaDestD
 if (fs.existsSync(path.join(__dirname, 'prisma', 'seed.ts'))) {
   fs.cpSync(path.join(__dirname, 'prisma', 'seed.ts'), path.join(prismaDestDir, 'seed.ts'));
 }
+if (fs.existsSync(path.join(__dirname, 'prisma-setup.js'))) {
+  fs.cpSync(path.join(__dirname, 'prisma-setup.js'), path.join(deployDir, 'prisma-setup.js'));
+}
 
 // 5. Create zip file using Windows tar (available in Windows 10/11)
 console.log('📦 Zipping files (this may take a moment)...');

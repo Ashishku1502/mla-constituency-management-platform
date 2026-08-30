@@ -85,11 +85,12 @@ const mockDataProxy = {
   }
 };
 
-// Only wrap with mock proxy in development/test; use the real client in production
-export const prisma =
-  process.env.NODE_ENV === "production"
-    ? realPrisma
-    : (new Proxy(realPrisma, mockDataProxy) as PrismaClient);
+// Only wrap with mock proxy in development/test when DISABLE_MOCKS is not true
+const useMocks = process.env.NODE_ENV !== "production" && process.env.DISABLE_MOCKS !== "true";
+
+export const prisma = useMocks
+  ? (new Proxy(realPrisma, mockDataProxy) as PrismaClient)
+  : realPrisma;
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = realPrisma;
 

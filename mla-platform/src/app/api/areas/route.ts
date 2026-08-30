@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -71,7 +71,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ success: true, data: formattedAreas });
   } catch (error) {
-    console.warn("Database read failed on Vercel, returning mock data.");
+    console.warn("Database read failed, returning mock data.");
     const mockAreas = [
       { id: "area-1", name: "Downtown Central", code: "DTC", population: 120000, status: "Active", householdCoverage: 85, manager: "John Doe", managerId: "user-1" },
       { id: "area-2", name: "Westside Valley", code: "WSV", population: 95000, status: "Active", householdCoverage: 62, manager: "Jane Smith", managerId: "user-2" },
@@ -148,7 +148,7 @@ export async function POST(req: Request) {
         },
       });
     } catch (dbError) {
-      console.warn("Database write failed (likely Vercel read-only SQLite). Returning mock success.");
+      console.warn("Database write failed. Returning mock success.");
       area = {
         id: "mock-area-" + Date.now(),
         name,

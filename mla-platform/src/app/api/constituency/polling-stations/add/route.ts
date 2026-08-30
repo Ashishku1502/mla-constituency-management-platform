@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         } as any,
       });
     } catch (dbError) {
-      console.warn("Database write failed (likely Vercel read-only SQLite). Returning mock success.");
+      console.warn("Database write failed. Returning mock success.");
       // Mock successful creation
       pollingStation = {
         id: "mock-id-" + Date.now(),

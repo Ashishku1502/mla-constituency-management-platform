@@ -101,7 +101,9 @@ jobs:
             # The standalone build already includes the correct Prisma engine.
             
             if [ -f ".env.production" ]; then
-              export $(grep -v '^#' .env.production | xargs)
+              set -a
+              . .env.production
+              set +a
               echo "✅ Loaded .env.production"
               npx prisma db push --skip-generate 2>/dev/null && echo "✅ DB migration done" || echo "⚠️ DB push skipped"
             else

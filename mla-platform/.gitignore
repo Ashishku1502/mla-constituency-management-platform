@@ -47,3 +47,21 @@ next-env.d.ts
 
 # PM2 logs
 /logs
+
+# Deploy artifacts — never commit these
+/deploy_package/
+/deploy.zip
+*.log
+build.log
+build_new.log
+tsc.log
+ts_errors.log
+ts_errors.txt
+
+# Deployment helper scripts (local use only)
+build_vps.js
+deploy_vps.js
+fix_env.js
+upload_deploy.js
+ssh_run.js
+tunnel.js

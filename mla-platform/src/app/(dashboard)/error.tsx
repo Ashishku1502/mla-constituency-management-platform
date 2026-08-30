@@ -38,7 +38,7 @@ export default function DashboardError({
       
       <p className="text-muted-foreground max-w-md mb-8">
         {isDatabaseError 
-          ? "This page requires a connection to your PostgreSQL database. If you are viewing this on Vercel, please link a database and ensure the DATABASE_URL environment variable is set."
+          ? "This page requires a connection to your PostgreSQL database. Please ensure the DATABASE_URL environment variable is correctly set in your production environment (such as .env.production on Hostinger VPS)."
           : "An unexpected error occurred while loading this page. Please try again."}
       </p>
 

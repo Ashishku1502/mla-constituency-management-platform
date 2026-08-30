@@ -26,11 +26,14 @@ import { ChevronRight, LogOut, Landmark, Sparkles } from "lucide-react";
 import { NAVIGATION, APP_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+import { useTranslation } from "@/hooks/use-translation";
+
 export function AppSidebar() {
   const pathname = usePathname();
+  const { t, language } = useTranslation();
 
   return (
-    <Sidebar variant="sidebar" collapsible="icon" className="border-r border-white/10 bg-[#0f172a] shadow-2xl">
+    <Sidebar variant="sidebar" collapsible="icon" className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-2xl transition-colors duration-300">
       {/* Dynamic Background Gradients */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute -top-[20%] -left-[10%] w-[120%] h-[50%] bg-gradient-to-br from-indigo-600/20 via-purple-600/10 to-transparent blur-3xl rounded-full" />
@@ -38,7 +41,7 @@ export function AppSidebar() {
       </div>
 
       {/* Header */}
-      <SidebarHeader className="relative z-10 px-4 py-5 border-b border-white/5 bg-black/10 backdrop-blur-md">
+      <SidebarHeader className="relative z-10 px-4 py-5 border-b border-sidebar-border bg-black/10 backdrop-blur-md">
         <Link href="/dashboard" className="flex items-center gap-3 group relative z-10">
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl
                           bg-gradient-to-br from-indigo-500 to-cyan-400
@@ -53,7 +56,7 @@ export function AppSidebar() {
             </span>
             <span className="text-[10px] font-bold tracking-widest uppercase
                              text-cyan-400 leading-none mt-1 opacity-90">
-              Constituency Platform
+              {language === "hi" ? "निर्वाचन क्षेत्र मंच" : "Constituency Platform"}
             </span>
           </div>
         </Link>
@@ -84,13 +87,13 @@ export function AppSidebar() {
                       <CollapsibleTrigger
                         render={
                           <SidebarMenuButton
-                            tooltip={item.title}
+                            tooltip={t(item.title)}
                             className={cn(
                               "relative font-medium transition-all duration-300 rounded-xl overflow-hidden group/btn",
                               "hover:bg-white/5 hover:text-white",
                               (isActive || isChildActive)
                                 ? "bg-gradient-to-r from-indigo-500/20 to-cyan-500/5 text-white font-semibold ring-1 ring-white/10 shadow-inner"
-                                : "text-slate-300"
+                                : "text-sidebar-foreground/80"
                             )}
                           />
                         }
@@ -103,13 +106,13 @@ export function AppSidebar() {
                             "h-4.5 w-4.5 transition-all duration-300 relative z-10",
                             (isActive || isChildActive)
                               ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]"
-                              : "text-slate-400 group-hover/btn:text-white"
+                              : "text-sidebar-foreground/60 group-hover/btn:text-white"
                           )}
                         />
-                        <span className="relative z-10 tracking-wide">{item.title}</span>
+                        <span className="relative z-10 tracking-wide">{t(item.title)}</span>
                         <ChevronRight className={cn(
                           "ml-auto h-4 w-4 transition-transform duration-300 relative z-10",
-                          isChildActive ? "text-cyan-400 rotate-90" : "text-slate-500 group-hover/btn:text-white group-data-[state=open]/collapsible:rotate-90"
+                          isChildActive ? "text-cyan-400 rotate-90" : "text-sidebar-foreground/50 group-hover/btn:text-white group-data-[state=open]/collapsible:rotate-90"
                         )} />
                       </CollapsibleTrigger>
                       <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
@@ -127,13 +130,13 @@ export function AppSidebar() {
                                     "hover:text-white hover:bg-white/5 hover:translate-x-1",
                                     isSubActive
                                       ? "text-white font-semibold bg-white/5 ring-1 ring-white/5"
-                                      : "text-slate-400"
+                                      : "text-sidebar-foreground/60"
                                   )}
                                   render={<Link href={child.href} />}
                                 >
                                   {isSubActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-cyan-400 rounded-r-full shadow-[0_0_8px_rgba(34,211,238,0.8)]" />}
-                                  <child.icon className={cn("h-3.5 w-3.5 transition-colors duration-300", isSubActive ? "text-cyan-400" : "text-slate-500 group-hover/sub:text-slate-300")} />
-                                  <span>{child.title}</span>
+                                  <child.icon className={cn("h-3.5 w-3.5 transition-colors duration-300", isSubActive ? "text-cyan-400" : "text-sidebar-foreground/40 group-hover/sub:text-slate-300")} />
+                                  <span>{t(child.title)}</span>
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             );
@@ -147,14 +150,14 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
-                      tooltip={item.title}
+                      tooltip={t(item.title)}
                       isActive={isActive}
                       className={cn(
                         "relative font-medium transition-all duration-300 rounded-xl overflow-hidden group/btn",
                         "hover:bg-white/5 hover:text-white hover:translate-x-1",
                         isActive
                           ? "bg-gradient-to-r from-indigo-500/20 to-cyan-500/5 text-white font-semibold ring-1 ring-white/10 shadow-inner"
-                          : "text-slate-300"
+                          : "text-sidebar-foreground/80"
                       )}
                       render={<Link href={item.href} />}
                     >
@@ -163,10 +166,10 @@ export function AppSidebar() {
                           "h-4.5 w-4.5 transition-all duration-300 relative z-10",
                           isActive
                             ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]"
-                            : "text-slate-400 group-hover/btn:text-white"
+                            : "text-sidebar-foreground/60 group-hover/btn:text-white"
                         )}
                       />
-                      <span className="relative z-10 tracking-wide">{item.title}</span>
+                      <span className="relative z-10 tracking-wide">{t(item.title)}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -177,7 +180,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       {/* Footer */}
-      <SidebarFooter className="relative z-10 px-4 py-4 bg-black/20 backdrop-blur-xl border-t border-white/10">
+      <SidebarFooter className="relative z-10 px-4 py-4 bg-black/20 backdrop-blur-xl border-t border-sidebar-border">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
         <SidebarMenu>
           <SidebarMenuItem>
@@ -188,10 +191,12 @@ export function AppSidebar() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden ml-1">
-                <span className="text-sm font-bold text-white tracking-wide">Amarinder S.</span>
+                <span className="text-sm font-bold text-white tracking-wide">
+                  {language === "hi" ? "अमरिंदर एस." : "Amarinder S."}
+                </span>
                 <span className="text-[10px] text-cyan-300 font-medium tracking-wider uppercase flex items-center gap-1.5 mt-0.5">
                   <Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
-                  Candidate
+                  {language === "hi" ? "उम्मीदवार" : "Candidate"}
                 </span>
               </div>
               <LogOut className="ml-auto h-4.5 w-4.5 text-slate-400 group-hover/footer:text-rose-400 transition-colors group-data-[collapsible=icon]:hidden" />

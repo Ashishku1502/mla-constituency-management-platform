@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/hooks/use-translation";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -80,23 +81,24 @@ const CustomTooltip = ({ active, payload, label }: any) => {
    Hero Banner
    ================================================================ */
 function HeroBanner({ stats }: { stats: any }) {
+  const { t } = useTranslation();
   return (
     <div className="relative overflow-hidden rounded-2xl mb-2
-                    bg-gradient-to-br from-[oklch(0.20_0.08_162)] via-[oklch(0.26_0.1_158)] to-[oklch(0.18_0.06_170)]
-                    text-white shadow-2xl shadow-[oklch(0.20_0.08_162/0.4)]">
+                    bg-gradient-to-br from-primary to-primary/40
+                    text-white shadow-2xl shadow-primary/10">
       {/* Animated background orbs */}
       <div className="pointer-events-none absolute -top-8 -left-8 h-48 w-48 rounded-full
-                      bg-[oklch(0.78_0.16_80/0.15)] blur-3xl animate-float" />
+                      bg-primary/15 blur-3xl animate-float" />
       <div className="pointer-events-none absolute -bottom-8 -right-8 h-56 w-56 rounded-full
-                      bg-[oklch(0.6_0.2_155/0.2)] blur-3xl animate-float"
+                      bg-primary/20 blur-3xl animate-float"
            style={{ animationDelay: "2s" }} />
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                      h-64 w-64 rounded-full bg-[oklch(0.78_0.16_80/0.05)] blur-3xl" />
+                      h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
       {/* Decorative grid */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
            style={{
-             backgroundImage: "linear-gradient(oklch(0.78_0.16_80) 1px, transparent 1px), linear-gradient(90deg, oklch(0.78_0.16_80) 1px, transparent 1px)",
+             backgroundImage: "linear-gradient(var(--primary) 1px, transparent 1px), linear-gradient(90deg, var(--primary) 1px, transparent 1px)",
              backgroundSize: "32px 32px",
            }} />
 
@@ -105,37 +107,34 @@ function HeroBanner({ stats }: { stats: any }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
-                            bg-gradient-to-br from-[oklch(0.78_0.16_80)] to-[oklch(0.72_0.18_55)]
-                            shadow-lg shadow-[oklch(0.78_0.16_80/0.5)]">
-              <Landmark className="h-4 w-4 text-[oklch(0.14_0.08_75)]" />
+                            bg-gradient-to-br from-primary to-primary-foreground/40
+                            shadow-lg shadow-primary/50">
+              <Landmark className="h-4 w-4 text-white" />
             </div>
-            <Badge className="bg-[oklch(0.78_0.16_80/0.2)] text-[oklch(0.78_0.16_80)] border border-[oklch(0.78_0.16_80/0.3)] text-[10px] font-semibold tracking-wider uppercase">
+            <Badge className="bg-primary/20 text-white border border-primary/30 text-[10px] font-semibold tracking-wider uppercase">
               <Sparkles className="h-2.5 w-2.5 mr-1" />
-              Live Overview
+              {t("Live Overview")}
             </Badge>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Constituency{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[oklch(0.78_0.16_80)] to-[oklch(0.72_0.18_55)]">
-              Dashboard
-            </span>
+            {t("Constituency Dashboard")}
           </h1>
           <p className="text-sm text-white/60 mt-1.5 max-w-md">
-            Real-time operational insights across your entire constituency network
+            {t("Real-time operational insights across your entire constituency network")}
           </p>
 
           {/* Quick stat pills — wrap gracefully on all sizes */}
           <div className="flex flex-wrap gap-2 mt-4">
             {[
-              { icon: Users, label: "Records", value: stats?.totalRecords?.toLocaleString() ?? "—" },
-              { icon: Home, label: "Households", value: stats?.totalHouseholds?.toLocaleString() ?? "—" },
-              { icon: UserCheck, label: "Volunteers", value: stats?.volunteers?.toLocaleString() ?? "—" },
+              { icon: Users, label: t("Total Records"), value: stats?.totalRecords?.toLocaleString() ?? "—" },
+              { icon: Home, label: t("Households"), value: stats?.totalHouseholds?.toLocaleString() ?? "—" },
+              { icon: UserCheck, label: t("Volunteers"), value: stats?.volunteers?.toLocaleString() ?? "—" },
             ].map(({ icon: Icon, label, value }) => (
               <div key={label}
                    className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5
                               bg-white/10 backdrop-blur-sm border border-white/15
                               min-w-0 shrink">
-                <Icon className="h-3.5 w-3.5 shrink-0 text-[oklch(0.78_0.16_80)]" />
+                <Icon className="h-3.5 w-3.5 shrink-0 text-white/80" />
                 <span className="text-[11px] text-white/70 whitespace-nowrap">{label}</span>
                 <span className="text-[11px] font-bold text-white whitespace-nowrap">{value}</span>
               </div>
@@ -146,12 +145,12 @@ function HeroBanner({ stats }: { stats: any }) {
         {/* Right — decorative ring stat, only on md+ to avoid squishing at 640px */}
         <div className="hidden md:flex flex-col items-center justify-center
                         h-24 w-24 rounded-full shrink-0
-                        border-2 border-[oklch(0.78_0.16_80/0.4)]
-                        bg-[oklch(0.78_0.16_80/0.1)]
-                        shadow-[0_0_40px_oklch(0.78_0.16_80/0.2)]">
-          <Star className="h-4 w-4 text-[oklch(0.78_0.16_80)] mb-1" />
+                        border-2 border-primary/40
+                        bg-primary/10
+                        shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+          <Star className="h-4 w-4 text-white mb-1" />
           <p className="text-xl font-extrabold text-white">{stats?.householdCoverage ?? "—"}%</p>
-          <p className="text-[10px] text-white/60 font-medium uppercase tracking-wider">Coverage</p>
+          <p className="text-[10px] text-white/60 font-medium uppercase tracking-wider">{t("Coverage")}</p>
         </div>
       </div>
     </div>
@@ -226,8 +225,9 @@ function CoverageCard({
 }: {
   label: string; value: number; sublabel: string; colorClass: string;
 }) {
+  const { t } = useTranslation();
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden border border-border/50 shadow-sm">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
@@ -235,7 +235,7 @@ function CoverageCard({
         </div>
         <div className="relative h-2 w-full rounded-full bg-muted overflow-hidden mb-2">
           <div
-            className={`absolute left-0 top-0 h-full rounded-full bg-gradient-to-r ${colorClass.includes("emerald") ? "from-emerald-500 to-teal-500" : colorClass.includes("gold") || colorClass.includes("amber") ? "from-amber-400 to-yellow-500" : "from-[oklch(0.42_0.18_160)] to-[oklch(0.56_0.16_195)]"} transition-all duration-700`}
+            className={`absolute left-0 top-0 h-full rounded-full bg-gradient-to-r ${colorClass.includes("primary") ? "from-primary to-primary/60" : colorClass.includes("chart-2") ? "from-chart-2 to-chart-2/60" : "from-chart-3 to-chart-3/60"} transition-all duration-700`}
             style={{ width: `${value}%` }}
           />
         </div>
@@ -262,7 +262,7 @@ function AreaCoverageList({ areas }: { areas: any[] }) {
               className="absolute left-0 top-0 h-full rounded-full transition-all duration-700"
               style={{
                 width: `${area.households}%`,
-                background: `linear-gradient(90deg, oklch(0.42 0.18 160), oklch(0.78 0.16 80))`,
+                background: `linear-gradient(90deg, var(--primary), var(--secondary))`,
               }}
             />
           </div>
@@ -274,10 +274,10 @@ function AreaCoverageList({ areas }: { areas: any[] }) {
 
 /* ================================================================
    Dashboard Page
-   ================================================================ */
-export default function DashboardPage() {
+   =======================================================export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { t, language } = useTranslation();
 
   useEffect(() => {
     async function loadStats() {
@@ -315,7 +315,7 @@ export default function DashboardPage() {
   /* Richer activity completion colours */
   const enrichedActivityData = charts.activityCompletionData.map((d: any, i: number) => ({
     ...d,
-    color: [CHART_COLORS.emerald, CHART_COLORS.gold, CHART_COLORS.coral, CHART_COLORS.teal][i % 4],
+    color: ["var(--primary)", "var(--chart-2)", "var(--chart-4)", "var(--chart-3)"][i % 4],
   }));
 
   return (
@@ -327,113 +327,113 @@ export default function DashboardPage() {
       {/* KPI Cards Row 1 */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-stagger-2">
         <StatCard
-          title="Total Records"
+          title={t("Total Records")}
           value={stats.totalRecords}
           icon={Users}
-          trend={{ value: 2.5, label: "this month" }}
-          gradient="from-emerald-500 to-teal-600"
-          glowColor="0 8px 24px oklch(0.42 0.18 160 / 0.35)"
-          bgLight="bg-gradient-to-br from-emerald-50/60 to-teal-50/40 dark:from-emerald-950/20 dark:to-teal-950/10"
+          trend={{ value: 2.5, label: t("this month") }}
+          gradient="from-primary to-primary/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--primary) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-primary/5 to-transparent border-primary/20 hover:border-primary/45 transition-colors duration-300"
         />
         <StatCard
-          title="Households"
+          title={t("Households")}
           value={stats.totalHouseholds}
           icon={Home}
-          trend={{ value: 5.2, label: "this month" }}
-          gradient="from-amber-400 to-yellow-500"
-          glowColor="0 8px 24px oklch(0.78 0.16 80 / 0.4)"
-          bgLight="bg-gradient-to-br from-amber-50/60 to-yellow-50/40 dark:from-amber-950/20 dark:to-yellow-950/10"
+          trend={{ value: 5.2, label: t("this month") }}
+          gradient="from-chart-2 to-chart-2/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--chart-2) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-chart-2/5 to-transparent border-chart-2/20 hover:border-chart-2/45 transition-colors duration-300"
         />
         <StatCard
-          title="Areas"
+          title={t("Areas")}
           value={stats.totalAreas}
           icon={Building2}
-          gradient="from-violet-500 to-purple-600"
-          glowColor="0 8px 24px oklch(0.55 0.22 300 / 0.35)"
-          bgLight="bg-gradient-to-br from-violet-50/60 to-purple-50/40 dark:from-violet-950/20 dark:to-purple-950/10"
+          gradient="from-chart-3 to-chart-3/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--chart-3) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-chart-3/5 to-transparent border-chart-3/20 hover:border-chart-3/45 transition-colors duration-300"
         />
         <StatCard
-          title="Polling Stations"
+          title={t("Polling Stations")}
           value={stats.totalPollingStations}
           icon={Vote}
-          gradient="from-cyan-500 to-sky-600"
-          glowColor="0 8px 24px oklch(0.62 0.18 210 / 0.35)"
-          bgLight="bg-gradient-to-br from-cyan-50/60 to-sky-50/40 dark:from-cyan-950/20 dark:to-sky-950/10"
+          gradient="from-chart-4 to-chart-4/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--chart-4) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-chart-4/5 to-transparent border-chart-4/20 hover:border-chart-4/45 transition-colors duration-300"
         />
       </div>
 
       {/* KPI Cards Row 2 */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-stagger-3">
         <StatCard
-          title="Active Volunteers"
+          title={t("Active Volunteers")}
           value={stats.volunteers}
           icon={UserCheck}
-          trend={{ value: 8.3, label: "this month" }}
-          gradient="from-green-500 to-emerald-600"
-          glowColor="0 8px 24px oklch(0.55 0.2 145 / 0.35)"
-          bgLight="bg-gradient-to-br from-green-50/60 to-emerald-50/40 dark:from-green-950/20 dark:to-emerald-950/10"
+          trend={{ value: 8.3, label: t("this month") }}
+          gradient="from-chart-5 to-chart-5/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--chart-5) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-chart-5/5 to-transparent border-chart-5/20 hover:border-chart-5/45 transition-colors duration-300"
         />
         <StatCard
-          title="Completed Activities"
+          title={t("Completed Activities")}
           value={stats.completedActivities}
           icon={CheckCircle2}
-          trend={{ value: 12.1, label: "vs last month" }}
-          gradient="from-teal-500 to-cyan-600"
-          glowColor="0 8px 24px oklch(0.56 0.16 195 / 0.35)"
-          bgLight="bg-gradient-to-br from-teal-50/60 to-cyan-50/40 dark:from-teal-950/20 dark:to-cyan-950/10"
+          trend={{ value: 12.1, label: t("vs last month") }}
+          gradient="from-primary to-primary/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--primary) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-primary/5 to-transparent border-primary/20 hover:border-primary/45 transition-colors duration-300"
         />
         <StatCard
-          title="Pending Activities"
+          title={t("Pending Activities")}
           value={stats.pendingActivities}
           icon={Clock}
-          trend={{ value: -3.2, label: "vs last month" }}
-          gradient="from-orange-400 to-amber-500"
-          glowColor="0 8px 24px oklch(0.72 0.18 55 / 0.35)"
-          bgLight="bg-gradient-to-br from-orange-50/60 to-amber-50/40 dark:from-orange-950/20 dark:to-amber-950/10"
+          trend={{ value: -3.2, label: t("vs last month") }}
+          gradient="from-chart-2 to-chart-2/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--chart-2) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-chart-2/5 to-transparent border-chart-2/20 hover:border-chart-2/45 transition-colors duration-300"
         />
         <StatCard
-          title="Reported Issues"
+          title={t("Reported Issues")}
           value={stats.reportedIssues}
           icon={AlertTriangle}
-          trend={{ value: -5.1, label: "vs last month" }}
-          gradient="from-rose-500 to-red-600"
-          glowColor="0 8px 24px oklch(0.62 0.22 25 / 0.35)"
-          bgLight="bg-gradient-to-br from-rose-50/60 to-red-50/40 dark:from-rose-950/20 dark:to-red-950/10"
+          trend={{ value: -5.1, label: t("vs last month") }}
+          gradient="from-chart-4 to-chart-4/60"
+          glowColor="0 8px 24px color-mix(in srgb, var(--chart-4) 35%, transparent)"
+          bgLight="bg-gradient-to-br from-chart-4/5 to-transparent border-chart-4/20 hover:border-chart-4/45 transition-colors duration-300"
         />
       </div>
 
       {/* Coverage Summary — 1 col on mobile, 3 col from md to avoid cramping at 640px */}
       <div className="grid gap-4 md:grid-cols-3 animate-stagger-4">
         <CoverageCard
-          label="Household Coverage"
+          label={t("Household Coverage")}
           value={stats.householdCoverage}
-          sublabel={`${Math.round(stats.totalHouseholds * (stats.householdCoverage / 100)).toLocaleString()} of ${stats.totalHouseholds.toLocaleString()} covered`}
-          colorClass="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+          sublabel={`${Math.round(stats.totalHouseholds * (stats.householdCoverage / 100)).toLocaleString()} ${t("of")} ${stats.totalHouseholds.toLocaleString()} ${t("covered")}`}
+          colorClass="bg-primary/10 text-primary border-primary/20 dark:bg-primary/20 dark:text-primary"
         />
         <CoverageCard
-          label="Reporting Compliance"
+          label={t("Reporting Compliance")}
           value={stats.reportingCompliance}
-          sublabel={`${stats.volunteers - Math.round(stats.volunteers * 0.18)} of ${stats.volunteers} volunteers on time`}
-          colorClass="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+          sublabel={`${stats.volunteers - Math.round(stats.volunteers * 0.18)} ${t("of")} ${stats.volunteers} ${t("volunteers on time")}`}
+          colorClass="bg-chart-2/10 text-chart-2 border-chart-2/20 dark:bg-chart-2/20 dark:text-chart-2"
         />
         <CoverageCard
-          label="Issue Resolution"
+          label={t("Issue Resolution")}
           value={Math.round((stats.resolvedIssues / stats.reportedIssues) * 100)}
-          sublabel={`${stats.resolvedIssues} of ${stats.reportedIssues} issues resolved`}
-          colorClass="bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400"
+          sublabel={`${stats.resolvedIssues} ${t("of")} ${stats.reportedIssues} ${t("issues resolved")}`}
+          colorClass="bg-chart-3/10 text-chart-3 border-chart-3/20 dark:bg-chart-3/20 dark:text-chart-3"
         />
       </div>
 
       {/* Charts Row 1 */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Activity Status Donut */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border border-border/50 shadow-sm">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-emerald-500 to-teal-600" />
-              <CardTitle className="text-base font-bold">Activity Status</CardTitle>
+              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-primary/60" />
+              <CardTitle className="text-base font-bold">{t("Activity Status")}</CardTitle>
             </div>
-            <CardDescription className="text-xs">Current distribution of all activities</CardDescription>
+            <CardDescription className="text-xs">{t("Current distribution of all activities")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <div className="flex items-center gap-6">
@@ -459,7 +459,7 @@ export default function DashboardPage() {
                   <div key={item.name} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2.5">
                       <div className="h-2.5 w-2.5 rounded-full shadow-sm" style={{ backgroundColor: item.color }} />
-                      <span className="text-muted-foreground font-medium">{item.name}</span>
+                      <span className="text-muted-foreground font-medium">{t(item.name)}</span>
                     </div>
                     <span className="font-bold text-foreground">{item.value}</span>
                   </div>
@@ -470,23 +470,23 @@ export default function DashboardPage() {
         </Card>
 
         {/* Area Performance Bar */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border border-border/50 shadow-sm">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-amber-400 to-yellow-500" />
-              <CardTitle className="text-base font-bold">Area Performance</CardTitle>
+              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-2 to-chart-2/60" />
+              <CardTitle className="text-base font-bold">{t("Area Performance")}</CardTitle>
             </div>
-            <CardDescription className="text-xs">Activity completion & household coverage by area</CardDescription>
+            <CardDescription className="text-xs">{t("Activity completion & household coverage by area")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={charts.areaPerformanceData} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.88 0.025 150 / 0.5)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="activities" fill={CHART_COLORS.emerald} radius={[5, 5, 0, 0]} name="Activities" />
-                <Bar dataKey="households" fill={CHART_COLORS.gold} radius={[5, 5, 0, 0]} name="Coverage %" />
+                <Bar dataKey="activities" fill="var(--primary)" radius={[5, 5, 0, 0]} name={t("Activities")} />
+                <Bar dataKey="households" fill="var(--chart-2)" radius={[5, 5, 0, 0]} name={t("Coverage")} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -496,63 +496,63 @@ export default function DashboardPage() {
       {/* Charts Row 2 */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Monthly Activity Trend */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border border-border/50 shadow-sm">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-teal-500 to-cyan-600" />
-              <CardTitle className="text-base font-bold">Monthly Activity Trend</CardTitle>
+              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-3 to-chart-3/60" />
+              <CardTitle className="text-base font-bold">{t("Monthly Activity Trend")}</CardTitle>
             </div>
-            <CardDescription className="text-xs">Completed vs pending vs overdue over time</CardDescription>
+            <CardDescription className="text-xs">{t("Completed vs pending vs overdue over time")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={charts.monthlyActivityData}>
                 <defs>
                   <linearGradient id="gradCompleted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={CHART_COLORS.emerald} stopOpacity={0.25} />
-                    <stop offset="95%" stopColor={CHART_COLORS.emerald} stopOpacity={0.02} />
+                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0.02} />
                   </linearGradient>
                   <linearGradient id="gradPending" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={CHART_COLORS.gold} stopOpacity={0.25} />
-                    <stop offset="95%" stopColor={CHART_COLORS.gold} stopOpacity={0.02} />
+                    <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0.02} />
                   </linearGradient>
                   <linearGradient id="gradOverdue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={CHART_COLORS.coral} stopOpacity={0.25} />
-                    <stop offset="95%" stopColor={CHART_COLORS.coral} stopOpacity={0.02} />
+                    <stop offset="5%" stopColor="var(--chart-4)" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="var(--chart-4)" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.88 0.025 150 / 0.4)" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: "11px" }} />
-                <Area type="monotone" dataKey="completed" stackId="1" stroke={CHART_COLORS.emerald} strokeWidth={2} fill="url(#gradCompleted)" name="Completed" />
-                <Area type="monotone" dataKey="pending" stackId="1" stroke={CHART_COLORS.gold} strokeWidth={2} fill="url(#gradPending)" name="Pending" />
-                <Area type="monotone" dataKey="overdue" stackId="1" stroke={CHART_COLORS.coral} strokeWidth={2} fill="url(#gradOverdue)" name="Overdue" />
+                <Area type="monotone" dataKey="completed" stackId="1" stroke="var(--primary)" strokeWidth={2} fill="url(#gradCompleted)" name={t("Completed")} />
+                <Area type="monotone" dataKey="pending" stackId="1" stroke="var(--chart-2)" strokeWidth={2} fill="url(#gradPending)" name={t("Pending")} />
+                <Area type="monotone" dataKey="overdue" stackId="1" stroke="var(--chart-4)" strokeWidth={2} fill="url(#gradOverdue)" name={t("Overdue")} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
         {/* Issue Resolution Trend */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border border-border/50 shadow-sm">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-rose-500 to-red-600" />
-              <CardTitle className="text-base font-bold">Issue Resolution</CardTitle>
+              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-4 to-chart-4/60" />
+              <CardTitle className="text-base font-bold">{t("Issue Resolution Trend")}</CardTitle>
             </div>
-            <CardDescription className="text-xs">Reported vs resolved issues per month</CardDescription>
+            <CardDescription className="text-xs">{t("Reported vs resolved issues per month")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={charts.issueResolutionData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.88 0.025 150 / 0.4)" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: "11px" }} />
-                <Line type="monotone" dataKey="reported" stroke={CHART_COLORS.coral} strokeWidth={2.5} dot={{ r: 3.5, fill: CHART_COLORS.coral, strokeWidth: 0 }} activeDot={{ r: 5 }} name="Reported" />
-                <Line type="monotone" dataKey="resolved" stroke={CHART_COLORS.emerald} strokeWidth={2.5} dot={{ r: 3.5, fill: CHART_COLORS.emerald, strokeWidth: 0 }} activeDot={{ r: 5 }} name="Resolved" />
+                <Line type="monotone" dataKey="reported" stroke="var(--chart-4)" strokeWidth={2.5} dot={{ r: 3.5, fill: "var(--chart-4)", strokeWidth: 0 }} activeDot={{ r: 5 }} name={t("Reported")} />
+                <Line type="monotone" dataKey="resolved" stroke="var(--primary)" strokeWidth={2.5} dot={{ r: 3.5, fill: "var(--primary)", strokeWidth: 0 }} activeDot={{ r: 5 }} name={t("Resolved")} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -562,13 +562,13 @@ export default function DashboardPage() {
       {/* Bottom Row */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Household Coverage by Area */}
-        <Card className="lg:col-span-1 overflow-hidden">
+        <Card className="lg:col-span-1 overflow-hidden border border-border/50 shadow-sm">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-emerald-500 to-yellow-500" />
-              <CardTitle className="text-base font-bold">Coverage by Area</CardTitle>
+              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-chart-2" />
+              <CardTitle className="text-base font-bold">{t("Coverage by Area")}</CardTitle>
             </div>
-            <CardDescription className="text-xs">Household coverage percentage per area</CardDescription>
+            <CardDescription className="text-xs">{t("Household coverage percentage per area")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <AreaCoverageList areas={charts.areaPerformanceData} />
@@ -576,24 +576,24 @@ export default function DashboardPage() {
         </Card>
 
         {/* Volunteer Activity */}
-        <Card className="lg:col-span-2 overflow-hidden">
+        <Card className="lg:col-span-2 overflow-hidden border border-border/50 shadow-sm">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-violet-500 to-purple-600" />
-              <CardTitle className="text-base font-bold">Volunteer Activity</CardTitle>
+              <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-3 to-chart-5" />
+              <CardTitle className="text-base font-bold">{t("Volunteer Activity")}</CardTitle>
             </div>
-            <CardDescription className="text-xs">Active vs inactive volunteers over time</CardDescription>
+            <CardDescription className="text-xs">{t("Active vs inactive volunteers over time")}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={charts.volunteerActivityData} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.88 0.025 150 / 0.4)" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "oklch(0.5 0.05 155)" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: "11px" }} />
-                <Bar dataKey="active" fill={CHART_COLORS.emerald} radius={[5, 5, 0, 0]} name="Active" />
-                <Bar dataKey="inactive" fill="oklch(0.85 0.02 150)" radius={[5, 5, 0, 0]} name="Inactive" />
+                <Bar dataKey="active" fill="var(--primary)" radius={[5, 5, 0, 0]} name={t("Active")} />
+                <Bar dataKey="inactive" fill="var(--muted)" radius={[5, 5, 0, 0]} name={t("Inactive")} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
+    "dev": "node prisma-setup.js && next dev",
+    "build": "node prisma-setup.js && prisma generate && next build",
     "build:shared": "npm run build && node package-shared.mjs",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate",
-    "db:setup": "prisma db push && prisma db seed"
+    "postinstall": "node prisma-setup.js && prisma generate",
+    "db:setup": "node prisma-setup.js && prisma db push && prisma db seed"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

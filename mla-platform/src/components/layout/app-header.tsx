@@ -31,6 +31,8 @@ import { NAVIGATION } from "@/lib/constants";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
+import { useTranslation } from "@/hooks/use-translation";
+
 function useBreadcrumbs() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
@@ -80,10 +82,10 @@ const LANGUAGES = [
 ];
 
 export function AppHeader() {
+  const { language, setLanguage, t } = useTranslation();
   const crumbs = useBreadcrumbs();
   const [isDark, setIsDark] = useState(false);
   const [activeTheme, setActiveTheme] = useState("emerald");
-  const [activeLanguage, setActiveLanguage] = useState("en");
   const unreadCount = 4;
 
   useEffect(() => {
@@ -95,10 +97,6 @@ export function AppHeader() {
     const savedTheme = localStorage.getItem("app-theme") || "emerald";
     setActiveTheme(savedTheme);
     document.documentElement.setAttribute("data-theme", savedTheme);
-
-    // Check initial language
-    const savedLanguage = localStorage.getItem("app-language") || "en";
-    setActiveLanguage(savedLanguage);
   }, []);
 
   const toggleTheme = () => {
@@ -112,12 +110,6 @@ export function AppHeader() {
     localStorage.setItem("app-theme", themeId);
   };
 
-  const changeLanguage = (langId: string) => {
-    setActiveLanguage(langId);
-    localStorage.setItem("app-language", langId);
-    // In a real app with i18n, this would also trigger a route change or translation swap
-  };
-
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 px-4
                        border-b border-border/50
@@ -127,7 +119,7 @@ export function AppHeader() {
 
       {/* Subtle top gradient line */}
       <div className="pointer-events-none absolute top-0 left-0 right-0 h-px
-                      bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+                       bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
       <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-primary transition-colors" />
       <Separator orientation="vertical" className="h-5 bg-border/60" />
@@ -135,7 +127,7 @@ export function AppHeader() {
       {/* Mobile page title (visible only below sm breakpoint) */}
       {crumbs.length > 0 && (
         <span className="sm:hidden text-sm font-semibold text-foreground truncate max-w-[160px]">
-          {crumbs[crumbs.length - 1].label}
+          {t(crumbs[crumbs.length - 1].label)}
         </span>
       )}
 
@@ -153,7 +145,7 @@ export function AppHeader() {
                   : "text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               }
             >
-              {crumb.label}
+              {t(crumb.label)}
             </span>
           </span>
         ))}
@@ -187,7 +179,7 @@ export function AppHeader() {
               >
                 <Globe className="h-4 w-4" />
                 <span className="absolute -bottom-1 -right-1 text-[9px] font-bold bg-primary text-primary-foreground rounded px-0.5">
-                  {LANGUAGES.find((l) => l.id === activeLanguage)?.short}
+                  {LANGUAGES.find((l) => l.id === language)?.short}
                 </span>
                 <span className="sr-only">Language Option</span>
               </Button>
@@ -195,16 +187,16 @@ export function AppHeader() {
           />
           <DropdownMenuContent align="end" className="w-36 rounded-xl border-border/60 shadow-xl shadow-black/10 p-1.5">
             <DropdownMenuLabel className="text-xs font-semibold px-2 py-1.5 text-muted-foreground">
-              Select Language
+              {language === "hi" ? "भाषा चुनें" : "Select Language"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="mx-1 bg-border/60" />
             {LANGUAGES.map((l) => (
               <DropdownMenuItem
                 key={l.id}
-                onClick={() => changeLanguage(l.id)}
+                onClick={() => setLanguage(l.id as any)}
                 className={cn(
                   "rounded-lg cursor-pointer text-sm gap-2.5 px-2 py-1.5 transition-colors",
-                  activeLanguage === l.id && "bg-primary/10 font-semibold text-primary"
+                  language === l.id && "bg-primary/10 font-semibold text-primary"
                 )}
               >
                 {l.label}
@@ -309,7 +301,7 @@ export function AppHeader() {
               </AvatarFallback>
             </Avatar>
             <span className="hidden md:inline text-sm font-semibold text-foreground">
-              Amarinder S.
+              {language === "hi" ? "अमरिंदर एस." : "Amarinder S."}
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52 rounded-xl border-border/60 shadow-xl shadow-black/10 p-1.5">
@@ -321,10 +313,10 @@ export function AppHeader() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-sm font-semibold">Amarinder Singh</p>
+                  <p className="text-sm font-semibold">{language === "hi" ? "अमरिंदर सिंह" : "Amarinder Singh"}</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <Sparkles className="h-2.5 w-2.5 text-primary" />
-                    Candidate
+                    {language === "hi" ? "उम्मीदवार" : "Candidate"}
                   </p>
                 </div>
               </div>
@@ -332,16 +324,16 @@ export function AppHeader() {
             <DropdownMenuSeparator className="mx-1 bg-border/60" />
             <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 hover:bg-primary/10 hover:text-primary">
               <User className="h-4 w-4 text-muted-foreground" />
-              Profile
+              {language === "hi" ? "प्रोफ़ाइल" : "Profile"}
             </DropdownMenuItem>
             <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 hover:bg-primary/10 hover:text-primary">
               <Settings className="h-4 w-4 text-muted-foreground" />
-              Settings
+              {t("Settings")}
             </DropdownMenuItem>
             <DropdownMenuSeparator className="mx-1 bg-border/60" />
             <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 text-destructive focus:text-destructive focus:bg-destructive/8">
               <LogOut className="h-4 w-4" />
-              Log out
+              {t("Log out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
