@@ -274,7 +274,9 @@ function AreaCoverageList({ areas }: { areas: any[] }) {
 
 /* ================================================================
    Dashboard Page
-   =======================================================export default function DashboardPage() {
+   ================================================================ */
+
+export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { t, language } = useTranslation();
