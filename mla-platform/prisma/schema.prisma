@@ -142,6 +142,7 @@ model Ward {
   updatedAt  DateTime @updatedAt
   
   householdRefs Household[]
+  activities    Activity[]
 }
 
 model PollingStation {
@@ -217,6 +218,9 @@ model Record {
   householdId        String?
   household          Household?     @relation(fields: [householdId], references: [id])
   validationStatus   String         @default("Pending") // Validated, Pending, Error
+  sentiment          String?        // S(Supportive), N(Neutral), A(Anti)
+  comments           String?
+  photoUrl           String?
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
 }
@@ -237,6 +241,8 @@ model Activity {
   area             Area                 @relation(fields: [areaId], references: [id], onDelete: Cascade)
   pollingStationId String?
   pollingStation   PollingStation?      @relation(fields: [pollingStationId], references: [id])
+  wardId           String?
+  ward             Ward?                @relation(fields: [wardId], references: [id])
   teamLeaderId     String?
   teamLeader       TeamLeader?          @relation(fields: [teamLeaderId], references: [id])
   volunteersCount  Int                  @default(0)

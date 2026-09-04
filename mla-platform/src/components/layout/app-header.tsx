@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { NAVIGATION } from "@/lib/constants";
 import { useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 import { useTranslation } from "@/hooks/use-translation";
@@ -81,7 +82,7 @@ const LANGUAGES = [
   { id: "hi", label: "हिंदी", short: "HI" },
 ];
 
-export function AppHeader() {
+export function AppHeader({ user }: { user?: any }) {
   const { language, setLanguage, t } = useTranslation();
   const crumbs = useBreadcrumbs();
   const [isDark, setIsDark] = useState(false);
@@ -297,11 +298,11 @@ export function AppHeader() {
           >
             <Avatar className="h-6 w-6 ring-2 ring-primary/40 ring-offset-1 ring-offset-background transition-all duration-200">
               <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-primary to-primary/60 text-primary-foreground">
-                AS
+                {user?.name ? user.name.substring(0, 2).toUpperCase() : "U"}
               </AvatarFallback>
             </Avatar>
             <span className="hidden md:inline text-sm font-semibold text-foreground">
-              {language === "hi" ? "अमरिंदर एस." : "Amarinder S."}
+              {user?.name || (language === "hi" ? "उपयोगकर्ता" : "User")}
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52 rounded-xl border-border/60 shadow-xl shadow-black/10 p-1.5">
@@ -309,14 +310,14 @@ export function AppHeader() {
               <div className="flex items-center gap-2.5">
                 <Avatar className="h-8 w-8 ring-2 ring-primary/40">
                   <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-primary to-primary/60 text-primary-foreground">
-                    AS
+                    {user?.name ? user.name.substring(0, 2).toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-sm font-semibold">{language === "hi" ? "अमरिंदर सिंह" : "Amarinder Singh"}</p>
+                  <p className="text-sm font-semibold">{user?.name || (language === "hi" ? "उपयोगकर्ता" : "User")}</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <Sparkles className="h-2.5 w-2.5 text-primary" />
-                    {language === "hi" ? "उम्मीदवार" : "Candidate"}
+                    {user?.role || (language === "hi" ? "उम्मीदवार" : "Candidate")}
                   </p>
                 </div>
               </div>
@@ -331,7 +332,10 @@ export function AppHeader() {
               {t("Settings")}
             </DropdownMenuItem>
             <DropdownMenuSeparator className="mx-1 bg-border/60" />
-            <DropdownMenuItem className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 text-destructive focus:text-destructive focus:bg-destructive/8">
+            <DropdownMenuItem 
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="rounded-lg cursor-pointer text-sm gap-2.5 px-3 py-2 text-destructive focus:text-destructive focus:bg-destructive/8"
+            >
               <LogOut className="h-4 w-4" />
               {t("Log out")}
             </DropdownMenuItem>

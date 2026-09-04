@@ -20,11 +20,11 @@ export default async function CandidateProfilePage() {
 
   // Default fallback data if no candidate profile exists in DB yet
   const defaultCandidate = {
-    name: "Amarinder Singh",
+    name: "Rajesh Sharma",
     designation: "Senior Party Leader & Candidate",
     email: "amarinder.s@constituencyos.org",
     phone: "+91 98765 43210",
-    biography: "Amarinder Singh is a dedicated public servant and community leader with over 15 years of experience in regional governance. Born and raised in the heart of the constituency, he has championed numerous development projects focusing on rural infrastructure, clean water access, and educational reforms. Known for his grassroots approach, Amarinder has consistently worked towards uniting diverse community factions and bridging the gap between local citizens and state resources.",
+    biography: "Rajesh Sharma is a dedicated public servant and community leader with over 15 years of experience in regional governance. Born and raised in the heart of the constituency, he has championed numerous development projects focusing on rural infrastructure, clean water access, and educational reforms. Known for his grassroots approach, Amarinder has consistently worked towards uniting diverse community factions and bridging the gap between local citizens and state resources.",
     photoUrl: "https://ui-avatars.com/api/?name=Amarinder+Singh&size=256&background=0D8ABC&color=fff",
     education: null,
     experience: null,

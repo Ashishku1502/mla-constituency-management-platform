@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,20 +20,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { Building2, Search, MapPin, Users, Vote, Plus } from "lucide-react";
+import { Building2, Search, MapPin, Users, Vote, Plus, ChevronRight } from "lucide-react";
 
 interface AreaData {
   id: string;
@@ -42,7 +34,14 @@ interface AreaData {
   registeredVoters: number;
   status: string;
   householdCoverage: number;
+  psCoverage: number;
   pollingStations: number;
+  teamLeaders: number;
+  activitiesCount: {
+    running: number;
+    completed: number;
+    pending: number;
+  };
   manager: string;
   managerId: string | null;
 }
@@ -53,7 +52,7 @@ interface ManagerData {
 }
 
 export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData[], managers: ManagerData[] }) {
-  const router = import("next/navigation").then(mod => mod.useRouter);
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -70,7 +69,7 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
     <div className="space-y-6">
       <PageHeader
         title="Areas"
-        description="Manage constituency areas, boundaries, and assignments"
+        description="Manage constituency areas, boundaries, and assignments — click any area to drill down"
         icon={Building2}
         action={{
           label: "Add Area",
@@ -168,41 +167,51 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
         </CardContent>
       </Card>
 
-      {/* Table */}
+      {/* Table — Each row is clickable */}
       <Card>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Area Name</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead className="hidden md:table-cell">Population</TableHead>
-                <TableHead className="hidden lg:table-cell">Reg. Voters</TableHead>
-                <TableHead className="hidden sm:table-cell">Polling Stations</TableHead>
+                <TableHead>Area Name/Code</TableHead>
+                <TableHead className="hidden sm:table-cell">Total P/S</TableHead>
+                <TableHead className="hidden lg:table-cell">Total T/L</TableHead>
+                <TableHead className="hidden lg:table-cell">Activities (R/C/P)</TableHead>
                 <TableHead className="hidden lg:table-cell">Manager</TableHead>
-                <TableHead className="hidden lg:table-cell">Coverage</TableHead>
+                <TableHead className="hidden lg:table-cell">P/S Coverage</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="w-8"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
+              {filtered.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
+                    No areas found.
+                  </TableCell>
+                </TableRow>
+              )}
               {filtered.map((area) => (
-                <TableRow key={area.id} className="cursor-pointer hover:bg-muted/50">
+                <TableRow
+                  key={area.id}
+                  className="cursor-pointer hover:bg-muted/60 transition-colors group"
+                  onClick={() => router.push(`/constituency/areas/${area.id}`)}
+                >
                   <TableCell>
                     <div>
-                      <p className="font-medium">{area.name}</p>
-                      <p className="text-xs text-muted-foreground md:hidden">
-                        Pop: {area.population.toLocaleString()}
-                      </p>
+                      <p className="font-semibold group-hover:text-primary transition-colors">{area.name}</p>
+                      <p className="font-mono text-xs text-muted-foreground">{area.code}</p>
                     </div>
                   </TableCell>
-                  <TableCell className="font-mono text-xs">{area.code}</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {area.population.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell text-muted-foreground">
-                    {area.registeredVoters ? area.registeredVoters.toLocaleString() : "-"}
-                  </TableCell>
                   <TableCell className="hidden sm:table-cell">{area.pollingStations}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{area.teamLeaders}</TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <div className="flex gap-1.5 text-xs">
+                      <span className="text-emerald-500 font-medium" title="Running">{area.activitiesCount.running}</span> /
+                      <span className="text-primary font-medium" title="Completed">{area.activitiesCount.completed}</span> /
+                      <span className="text-amber-500 font-medium" title="Pending">{area.activitiesCount.pending}</span>
+                    </div>
+                  </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <span className={area.managerId ? "" : "text-muted-foreground italic"}>
                       {area.manager}
@@ -210,14 +219,17 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <div className="flex items-center gap-2 min-w-[100px]">
-                      <Progress value={area.householdCoverage} className="h-1.5 flex-1" />
+                      <Progress value={area.psCoverage} className="h-1.5 flex-1" />
                       <span className="text-xs text-muted-foreground w-8">
-                        {area.householdCoverage}%
+                        {area.psCoverage}%
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={area.status} />
+                  </TableCell>
+                  <TableCell>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </TableCell>
                 </TableRow>
               ))}
@@ -225,7 +237,6 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
           </Table>
         </CardContent>
       </Card>
-
     </div>
   );
 }

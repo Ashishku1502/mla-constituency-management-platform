@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/hooks/use-translation";
 import { MoreHorizontal, ShieldAlert, UserPlus, CheckCircle2, QrCode } from "lucide-react";
 import {
   DropdownMenu,
@@ -27,6 +28,7 @@ import { toast } from "sonner";
 
 export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembers: any[] }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
@@ -75,32 +77,41 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end mb-4">
-        <Button onClick={() => setIsQrDialogOpen(true)} variant="outline" className="gap-2">
+      <div className="flex justify-end mb-4 animate-stagger-1">
+        <Button onClick={() => setIsQrDialogOpen(true)} variant="outline" className="gap-2 bg-background/50 backdrop-blur-sm border-white/10 hover:bg-primary/10 hover:text-primary transition-all shadow-sm">
           <QrCode className="h-4 w-4" />
-          Generate Ward QR Code
+          {t("Generate Ward QR Code")}
         </Button>
       </div>
-      <div className="rounded-md border bg-card">
+      <div className="card-premium glass-card animate-stagger-2 overflow-hidden">
         <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Category</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Reported By</TableHead>
-            <TableHead>Area</TableHead>
-            <TableHead>Assigned To</TableHead>
-            <TableHead>Date Reported</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t("Category")}</TableHead>
+            <TableHead>{t("Description")}</TableHead>
+            <TableHead>{t("Reported By")}</TableHead>
+            <TableHead>{t("Area")}</TableHead>
+            <TableHead>{t("Assigned To")}</TableHead>
+            <TableHead>{t("Date Reported")}</TableHead>
+            <TableHead>{t("Priority")}</TableHead>
+            <TableHead>{t("Status")}</TableHead>
+            <TableHead className="text-right">{t("Actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {issues.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-6 text-muted-foreground">
-                No issues found. Report a new issue to get started.
+              <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-2xl border-2 border-white/5 glow-emerald">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/empty-issues.jpg" alt="No Issues" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">{t("All Clear!")}</h3>
+                    <p className="text-sm">{t("No issues found. Report a new issue to get started.")}</p>
+                  </div>
+                </div>
               </TableCell>
             </TableRow>
           ) : (
@@ -120,7 +131,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
                       {issue.assignedTo.name}
                     </Badge>
                   ) : (
-                    <span className="text-muted-foreground text-xs">Unassigned</span>
+                    <span className="text-muted-foreground text-xs">{t("Unassigned")}</span>
                   )}
                 </TableCell>
                 <TableCell>{issue.dateReported}</TableCell>
@@ -129,12 +140,12 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
                     variant={issue.priority === 'Critical' ? 'destructive' : 'secondary'}
                     className={issue.priority === 'High' ? 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400' : ''}
                   >
-                    {issue.priority}
+                    {t(issue.priority)}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge variant={issue.status === 'Resolved' || issue.status === 'Closed' ? 'default' : 'outline'}>
-                    {issue.status}
+                    {t(issue.status)}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
@@ -147,7 +158,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("Actions")}</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() => {
                           setSelectedIssue(issue);
@@ -156,7 +167,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
                         }}
                       >
                         <ShieldAlert className="mr-2 h-4 w-4" />
-                        Update Status
+                        {t("Update Status")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
@@ -166,7 +177,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
                         }}
                       >
                         <UserPlus className="mr-2 h-4 w-4" />
-                        Assign Team Member
+                        {t("Assign Team Member")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -182,29 +193,29 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
       <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Update Issue Status</DialogTitle>
+            <DialogTitle>{t("Update Issue Status")}</DialogTitle>
             <DialogDescription>
-              Change the resolution status for this issue.
+              {t("Change the resolution status for this issue.")}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Select value={newStatus} onValueChange={(v) => setNewStatus(v || "")}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Status" />
+                <SelectValue placeholder={t("Select Status")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="New">New</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="Resolved">Resolved</SelectItem>
-                <SelectItem value="Closed">Closed</SelectItem>
+                <SelectItem value="New">{t("New")}</SelectItem>
+                <SelectItem value="In Progress">{t("In Progress")}</SelectItem>
+                <SelectItem value="Pending">{t("Pending")}</SelectItem>
+                <SelectItem value="Resolved">{t("Resolved")}</SelectItem>
+                <SelectItem value="Closed">{t("Closed")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsStatusDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsStatusDialogOpen(false)}>{t("Cancel")}</Button>
             <Button onClick={() => handleUpdate("status")} disabled={isUpdating || newStatus === selectedIssue?.status}>
-              {isUpdating ? "Saving..." : "Save Status"}
+              {isUpdating ? "Saving..." : t("Save Status")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -214,18 +225,18 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Assign Team Member</DialogTitle>
+            <DialogTitle>{t("Assign Team Member")}</DialogTitle>
             <DialogDescription>
-              Assign this issue to a Team Leader or Volunteer for resolution.
+              {t("Assign this issue to a Team Leader or Volunteer for resolution.")}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Select value={newAssignee} onValueChange={(v) => setNewAssignee(v || "")}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Team Member" />
+                <SelectValue placeholder={t("Select Team Member")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="unassigned">-- Unassigned --</SelectItem>
+                <SelectItem value="unassigned">{t("-- Unassigned --")}</SelectItem>
                 {teamMembers.map(tm => (
                   <SelectItem key={tm.id} value={tm.id}>
                     {tm.name} ({tm.role})
@@ -235,9 +246,9 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>{t("Cancel")}</Button>
             <Button onClick={() => handleUpdate("assignee")} disabled={isUpdating || newAssignee === (selectedIssue?.assignedToId || "unassigned")}>
-              {isUpdating ? "Saving..." : "Assign Member"}
+              {isUpdating ? "Saving..." : t("Assign Member")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -247,15 +258,15 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
       <Dialog open={isQrDialogOpen} onOpenChange={setIsQrDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Generate Issue Reporting QR Code</DialogTitle>
+            <DialogTitle>{t("Generate Issue Reporting QR Code")}</DialogTitle>
             <DialogDescription>
-              Select a ward to generate a unique QR code. Print and place this at key locations so the public can report issues directly.
+              {t("Select a ward to generate a unique QR code. Print and place this at key locations so the public can report issues directly.")}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <Select value={selectedWardForQr} onValueChange={(v) => { setSelectedWardForQr(v ?? ""); setQrCodeData(null); }}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Ward / Area" />
+                <SelectValue placeholder={t("Select Ward / Area")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="w1">Ward 1A - North Zone</SelectItem>
@@ -268,12 +279,12 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
               <div className="flex flex-col items-center justify-center p-4 bg-muted/20 rounded-lg space-y-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={qrCodeData} alt="Ward QR Code" className="w-48 h-48 rounded shadow-sm" />
-                <p className="text-xs text-muted-foreground text-center">Scan to report an issue for the selected ward.</p>
+                <p className="text-xs text-muted-foreground text-center">{t("Scan to report an issue for the selected ward.")}</p>
                 <Button variant="outline" className="w-full" onClick={() => {
                   toast.success("QR Code saved for printing");
                   setIsQrDialogOpen(false);
                 }}>
-                  Save for Printing
+                  {t("Save for Printing")}
                 </Button>
               </div>
             )}
@@ -281,10 +292,10 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
           <DialogFooter>
             {!qrCodeData ? (
               <Button onClick={generateQR} disabled={!selectedWardForQr} className="w-full">
-                Generate QR
+                {t("Generate QR")}
               </Button>
             ) : (
-              <Button variant="ghost" onClick={() => setIsQrDialogOpen(false)} className="w-full">Close</Button>
+              <Button variant="ghost" onClick={() => setIsQrDialogOpen(false)} className="w-full">{t("Close")}</Button>
             )}
           </DialogFooter>
         </DialogContent>

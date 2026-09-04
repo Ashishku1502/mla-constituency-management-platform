@@ -1,7 +1,7 @@
 // ─── Mock Geographical Data for Map Visualization ──────────────────────────────────────────
 
-// Base center for Anandpur Sahib, Punjab
-export const mapCenter: [number, number] = [31.2330, 76.5160];
+// Base center for Muzaffarnagar, Uttar Pradesh
+export const mapCenter: [number, number] = [29.4727, 77.7085];
 
 // Constituency Boundary (Polygon)
 export const constituencyGeoJSON = {
@@ -10,7 +10,7 @@ export const constituencyGeoJSON = {
     {
       type: "Feature",
       properties: {
-        name: "Anandpur Sahib",
+        name: "Muzaffarnagar",
         type: "Constituency",
         code: "AC-042",
       },
@@ -18,12 +18,12 @@ export const constituencyGeoJSON = {
         type: "Polygon",
         coordinates: [
           [
-            [76.45, 31.28],
-            [76.58, 31.30],
-            [76.62, 31.22],
-            [76.54, 31.15],
-            [76.42, 31.18],
-            [76.45, 31.28],
+            [77.6425, 29.5197],
+            [77.7725, 29.5397],
+            [77.8125, 29.4597],
+            [77.7325, 29.3897],
+            [77.6125, 29.4197],
+            [77.6425, 29.5197],
           ]
         ]
       }
@@ -42,11 +42,11 @@ export const wardsGeoJSON = {
         type: "Polygon",
         coordinates: [
           [
-            [76.50, 31.25],
-            [76.52, 31.26],
-            [76.53, 31.23],
-            [76.51, 31.22],
-            [76.50, 31.25],
+            [77.6925, 29.4897],
+            [77.7125, 29.4997],
+            [77.7225, 29.4697],
+            [77.7025, 29.4597],
+            [77.6925, 29.4897],
           ]
         ]
       }
@@ -58,11 +58,11 @@ export const wardsGeoJSON = {
         type: "Polygon",
         coordinates: [
           [
-            [76.52, 31.26],
-            [76.54, 31.27],
-            [76.56, 31.24],
-            [76.53, 31.23],
-            [76.52, 31.26],
+            [77.7125, 29.4997],
+            [77.7325, 29.5097],
+            [77.7525, 29.4797],
+            [77.7225, 29.4697],
+            [77.7125, 29.4997],
           ]
         ]
       }
@@ -81,11 +81,11 @@ export const villagesGeoJSON = {
         type: "Polygon",
         coordinates: [
           [
-            [76.46, 31.27],
-            [76.48, 31.27],
-            [76.49, 31.25],
-            [76.47, 31.24],
-            [76.46, 31.27],
+            [77.6525, 29.5097],
+            [77.6725, 29.5097],
+            [77.6825, 29.4897],
+            [77.6625, 29.4797],
+            [77.6525, 29.5097],
           ]
         ]
       }
@@ -100,12 +100,12 @@ export const localitiesGeoJSON = {
     {
       type: "Feature",
       properties: { name: "Downtown Locality" },
-      geometry: { type: "Point", coordinates: [76.515, 31.235] }
+      geometry: { type: "Point", coordinates: [77.7075, 29.4747] }
     },
     {
       type: "Feature",
       properties: { name: "Market Area" },
-      geometry: { type: "Point", coordinates: [76.510, 31.240] }
+      geometry: { type: "Point", coordinates: [77.7025, 29.4797] }
     }
   ]
 };
@@ -121,7 +121,7 @@ export const pollingStationsGeoJSON = {
         number: 1,
         address: "100 Main St"
       },
-      geometry: { type: "Point", coordinates: [76.518, 31.238] }
+      geometry: { type: "Point", coordinates: [77.7105, 29.4777] }
     },
     {
       type: "Feature",
@@ -130,7 +130,7 @@ export const pollingStationsGeoJSON = {
         number: 2,
         address: "250 Education Rd"
       },
-      geometry: { type: "Point", coordinates: [76.530, 31.250] }
+      geometry: { type: "Point", coordinates: [77.7225, 29.4897] }
     },
     {
       type: "Feature",
@@ -139,7 +139,7 @@ export const pollingStationsGeoJSON = {
         number: 3,
         address: "50 Park Ave"
       },
-      geometry: { type: "Point", coordinates: [76.480, 31.260] }
+      geometry: { type: "Point", coordinates: [77.6725, 29.4997] }
     }
   ]
 };
@@ -155,11 +155,11 @@ export const divisionsGeoJSON = {
         type: "Polygon",
         coordinates: [
           [
-            [76.45, 31.28],
-            [76.58, 31.30],
-            [76.60, 31.25],
-            [76.47, 31.25],
-            [76.45, 31.28]
+            [77.6425, 29.5197],
+            [77.7725, 29.5397],
+            [77.7925, 29.4897],
+            [77.6625, 29.4897],
+            [77.6425, 29.5197]
           ]
         ]
       }
@@ -171,12 +171,12 @@ export const divisionsGeoJSON = {
         type: "Polygon",
         coordinates: [
           [
-            [76.47, 31.25],
-            [76.60, 31.25],
-            [76.62, 31.22],
-            [76.54, 31.15],
-            [76.42, 31.18],
-            [76.47, 31.25]
+            [77.6625, 29.4897],
+            [77.7925, 29.4897],
+            [77.8125, 29.4597],
+            [77.7325, 29.3897],
+            [77.6125, 29.4197],
+            [77.6625, 29.4897]
           ]
         ]
       }

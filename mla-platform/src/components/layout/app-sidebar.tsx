@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   Sidebar,
   SidebarContent,
@@ -28,7 +29,7 @@ import { cn } from "@/lib/utils";
 
 import { useTranslation } from "@/hooks/use-translation";
 
-export function AppSidebar() {
+export function AppSidebar({ user }: { user?: any }) {
   const pathname = usePathname();
   const { t, language } = useTranslation();
 
@@ -43,20 +44,19 @@ export function AppSidebar() {
       {/* Header */}
       <SidebarHeader className="relative z-10 px-4 py-5 border-b border-sidebar-border bg-black/10 backdrop-blur-md">
         <Link href="/dashboard" className="flex items-center gap-3 group relative z-10">
-          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl
-                          bg-gradient-to-br from-indigo-500 to-cyan-400
-                          shadow-[0_0_15px_rgba(99,102,241,0.5)]
-                          transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-[0_0_25px_rgba(99,102,241,0.7)]">
-            <Landmark className="h-5 w-5 text-white drop-shadow-md" />
-            <span className="absolute inset-0 rounded-xl ring-1 ring-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-md
+                          transition-all duration-500 group-hover:scale-105 group-hover:shadow-lg overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="PMP Logo" className="h-8 w-auto object-contain" />
+            <span className="absolute inset-0 rounded-xl ring-1 ring-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-            <span className="text-base font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 drop-shadow-sm">
-              {APP_NAME}
+            <span className="text-base font-extrabold tracking-tight text-white drop-shadow-sm">
+              PMP Consultancy
             </span>
-            <span className="text-[10px] font-bold tracking-widest uppercase
+            <span className="text-[9px] font-bold tracking-wider uppercase
                              text-cyan-400 leading-none mt-1 opacity-90">
-              {language === "hi" ? "निर्वाचन क्षेत्र मंच" : "Constituency Platform"}
+              Political Management Program
             </span>
           </div>
         </Link>
@@ -184,19 +184,22 @@ export function AppSidebar() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="h-auto py-2.5 px-2 hover:bg-white/10 rounded-xl transition-all duration-300 group/footer border border-transparent hover:border-white/5">
+            <SidebarMenuButton 
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="h-auto py-2.5 px-2 hover:bg-white/10 rounded-xl transition-all duration-300 group/footer border border-transparent hover:border-white/5"
+            >
               <Avatar className="h-9 w-9 ring-2 ring-indigo-500/30 group-hover/footer:ring-cyan-400 transition-all shadow-lg">
                 <AvatarFallback className="bg-gradient-to-br from-indigo-600 to-cyan-500 text-white font-bold tracking-wider">
-                  AS
+                  {user?.name ? user.name.substring(0, 2).toUpperCase() : "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden ml-1">
                 <span className="text-sm font-bold text-white tracking-wide">
-                  {language === "hi" ? "अमरिंदर एस." : "Amarinder S."}
+                  {user?.name || (language === "hi" ? "उपयोगकर्ता" : "User")}
                 </span>
                 <span className="text-[10px] text-cyan-300 font-medium tracking-wider uppercase flex items-center gap-1.5 mt-0.5">
                   <Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
-                  {language === "hi" ? "उम्मीदवार" : "Candidate"}
+                  {user?.role || (language === "hi" ? "उम्मीदवार" : "Candidate")}
                 </span>
               </div>
               <LogOut className="ml-auto h-4.5 w-4.5 text-slate-400 group-hover/footer:text-rose-400 transition-colors group-data-[collapsible=icon]:hidden" />

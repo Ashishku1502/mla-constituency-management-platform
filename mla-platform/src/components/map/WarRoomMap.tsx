@@ -66,7 +66,7 @@ export default function WarRoomMap({ filters }: { filters?: any }) {
     return () => clearInterval(interval);
   }, []);
 
-  if (!isMounted) return <div className="h-full w-full flex items-center justify-center bg-muted/20">Loading Map...</div>;
+  if (!isMounted) return <div className="h-full w-full flex items-center justify-center bg-muted/20">Loading Google Map...</div>;
 
   const showHeatmap = !filters || filters.area === "all";
 
@@ -78,8 +78,8 @@ export default function WarRoomMap({ filters }: { filters?: any }) {
         style={{ height: "100%", width: "100%", zIndex: 0 }}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+          url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+          attribution='&copy; <a href="https://www.google.com/maps">Google Maps</a>'
         />
 
         {constituencyBoundary && (

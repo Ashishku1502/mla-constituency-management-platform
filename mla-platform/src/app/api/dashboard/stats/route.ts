@@ -17,6 +17,8 @@ export async function GET() {
       pendingActivities,
       reportedIssues,
       resolvedIssues,
+      totalWards,
+      totalTeamLeaders,
     ] = await Promise.all([
       prisma.record.count(),
       prisma.household.count(),
@@ -27,6 +29,8 @@ export async function GET() {
       prisma.activity.count({ where: { status: { in: ["Draft", "Scheduled"] } } }),
       prisma.issue.count(),
       prisma.issue.count({ where: { status: "Resolved" } }),
+      prisma.ward.count(),
+      prisma.user.count({ where: { role: "Team Leader" } }),
     ]);
 
     const reportingCompliance = 82; 
@@ -117,7 +121,9 @@ export async function GET() {
         reportedIssues,
         resolvedIssues,
         householdCoverage,
-        reportingCompliance
+        reportingCompliance,
+        totalWards,
+        totalTeamLeaders
       },
       charts: {
         activityCompletionData,
@@ -141,7 +147,9 @@ export async function GET() {
         reportedIssues: 89,
         resolvedIssues: 65,
         householdCoverage: 68,
-        reportingCompliance: 85
+        reportingCompliance: 85,
+        totalWards: 56,
+        totalTeamLeaders: 12
       },
       charts: {
         activityCompletionData: [

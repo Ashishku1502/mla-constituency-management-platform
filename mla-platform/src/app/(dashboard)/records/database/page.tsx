@@ -46,40 +46,34 @@ export default async function RecordDatabasePage() {
         </Button>
       </PageHeader>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
-              <Database className="h-4.5 w-4.5" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Total Records</p>
-              <p className="text-lg font-bold">{totalRecords.toLocaleString()}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              <ShieldCheck className="h-4.5 w-4.5" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Validated</p>
-              <p className="text-lg font-bold">{validatedRecords.toLocaleString()}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-              <AlertTriangle className="h-4.5 w-4.5" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Needs Review</p>
-              <p className="text-lg font-bold">{needsReviewRecords.toLocaleString()}</p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="card-premium glass-card animate-stagger-1 p-4 flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary glow-emerald">
+            <Database className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Total Records</p>
+            <p className="text-2xl font-black text-gradient">{totalRecords.toLocaleString()}</p>
+          </div>
+        </div>
+        <div className="card-premium glass-card animate-stagger-2 p-4 flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 glow-emerald">
+            <ShieldCheck className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Validated</p>
+            <p className="text-2xl font-black text-gradient-gold">{validatedRecords.toLocaleString()}</p>
+          </div>
+        </div>
+        <div className="card-premium glass-card animate-stagger-3 p-4 flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]">
+            <AlertTriangle className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Needs Review</p>
+            <p className="text-2xl font-black">{needsReviewRecords.toLocaleString()}</p>
+          </div>
+        </div>
       </div>
 
       <RecordsClient 

@@ -8,8 +8,8 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { ListChecks, Upload, ShieldAlert, CheckCircle } from "lucide-react";
 
 const mockLists = [
-  { id: "lst-001", name: "Anandpur Sahib Urban Part 1", station: "Govt Sr Sec School", records: 520, status: "Validated", dateUploaded: "2024-07-10" },
-  { id: "lst-002", name: "Anandpur Sahib Urban Part 2", station: "Primary School Hall", records: 485, status: "Validated", dateUploaded: "2024-07-12" },
+  { id: "lst-001", name: "Muzaffarnagar Urban Part 1", station: "Govt Sr Sec School", records: 520, status: "Validated", dateUploaded: "2024-07-10" },
+  { id: "lst-002", name: "Muzaffarnagar Urban Part 2", station: "Primary School Hall", records: 485, status: "Validated", dateUploaded: "2024-07-12" },
   { id: "lst-003", name: "Kiratpur Sahib Rural Part 1", station: "Middle School Hall", records: 445, status: "Pending", dateUploaded: "2024-07-15" },
   { id: "lst-004", name: "Balachaur Town Part 1", station: "Gurudwara Hall", records: 362, status: "Error", dateUploaded: "2024-07-14" },
 ];

@@ -27,7 +27,7 @@ if (!fs.existsSync(standaloneDir)) {
   console.error('❌ Error: .next/standalone folder not found. Did you run `npm run build`?');
   process.exit(1);
 }
-fs.cpSync(standaloneDir, deployDir, { recursive: true });
+fs.cpSync(standaloneDir, deployDir, { recursive: true, dereference: true });
 
 // 3. Copy static files
 console.log('📁 Copying static assets...');
@@ -56,6 +56,12 @@ if (fs.existsSync(path.join(__dirname, 'prisma', 'seed.ts'))) {
 }
 if (fs.existsSync(path.join(__dirname, 'prisma-setup.js'))) {
   fs.cpSync(path.join(__dirname, 'prisma-setup.js'), path.join(deployDir, 'prisma-setup.js'));
+}
+if (fs.existsSync(path.join(__dirname, 'ecosystem.config.js'))) {
+  fs.cpSync(path.join(__dirname, 'ecosystem.config.js'), path.join(deployDir, 'ecosystem.config.js'));
+}
+if (fs.existsSync(path.join(__dirname, 'package.json'))) {
+  fs.cpSync(path.join(__dirname, 'package.json'), path.join(deployDir, 'package.json'));
 }
 
 // 5. Create zip file using Windows tar (available in Windows 10/11)

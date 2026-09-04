@@ -15,8 +15,14 @@ export default async function AreasPage() {
         managers: {
           include: { user: true }
         },
+        pollingStations: {
+          include: { teamLeader: true }
+        },
         _count: {
-          select: { pollingStations: true }
+          select: { teamLeaders: true, activities: true }
+        },
+        activities: {
+          select: { status: true }
         }
       },
       orderBy: { name: "asc" }
@@ -26,6 +32,14 @@ export default async function AreasPage() {
       const manager = area.managers.length > 0 ? area.managers[0].user.name : "Unassigned";
       const managerId = area.managers.length > 0 ? area.managers[0].userId : null;
       
+      const runningAct = area.activities.filter(a => a.status === "In Progress").length;
+      const completedAct = area.activities.filter(a => a.status === "Completed").length;
+      const pendingAct = area.activities.filter(a => a.status === "Pending" || a.status === "Draft" || a.status === "Scheduled").length;
+
+      const totalPS = area.pollingStations.length;
+      const assignedPS = area.pollingStations.filter(ps => ps.teamLeader !== null).length;
+      const psCoverage = totalPS > 0 ? Math.round((assignedPS / totalPS) * 100) : 0;
+
       return {
         id: area.id,
         name: area.name,
@@ -34,7 +48,10 @@ export default async function AreasPage() {
         registeredVoters: area.registeredVoters,
         status: area.status,
         householdCoverage: area.householdCoverage,
-        pollingStations: area._count.pollingStations,
+        psCoverage: psCoverage,
+        pollingStations: totalPS,
+        teamLeaders: area._count.teamLeaders,
+        activitiesCount: { running: runningAct, completed: completedAct, pending: pendingAct },
         manager,
         managerId,
       };
@@ -59,7 +76,10 @@ export default async function AreasPage() {
         registeredVoters: 28500,
         status: "Active",
         householdCoverage: 85,
+        psCoverage: 67,
         pollingStations: 12,
+        teamLeaders: 3,
+        activitiesCount: { running: 2, completed: 5, pending: 1 },
         manager: "Sarah Jenkins",
         managerId: "mock-m1",
       },
@@ -71,7 +91,10 @@ export default async function AreasPage() {
         registeredVoters: 41000,
         status: "Active",
         householdCoverage: 60,
+        psCoverage: 50,
         pollingStations: 18,
+        teamLeaders: 4,
+        activitiesCount: { running: 1, completed: 8, pending: 2 },
         manager: "Marcus Chen",
         managerId: "mock-m2",
       },
@@ -83,7 +106,10 @@ export default async function AreasPage() {
         registeredVoters: 22000,
         status: "Inactive",
         householdCoverage: 30,
+        psCoverage: 25,
         pollingStations: 8,
+        teamLeaders: 1,
+        activitiesCount: { running: 0, completed: 2, pending: 4 },
         manager: "Unassigned",
         managerId: null,
       }

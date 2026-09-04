@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // Helper to generate a slight random offset from a given center
@@ -10,9 +10,9 @@ function generateRandomCoordinates(centerLat: number, centerLng: number) {
 
 export async function GET() {
   try {
-    // Default fallback center
-    const centerLat = 21.7645;
-    const centerLng = 78.8718;
+    // Default fallback center (Muzaffarnagar)
+    const centerLat = 29.4727;
+    const centerLng = 77.7085;
 
     // Try to get constituency center from DB if we had coordinates, but we don't in schema
     // We will just use the fallback for now as it represents the center of the demo map.

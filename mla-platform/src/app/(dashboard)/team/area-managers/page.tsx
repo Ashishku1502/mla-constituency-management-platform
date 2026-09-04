@@ -32,7 +32,7 @@ export default async function AreaManagersPage() {
     }));
   } catch (error) {
     formattedManagers = [
-      { id: "1", name: "Rajinder Singh", mobile: "9876543210", area: "Anandpur Sahib Urban", status: "Active", joinedDate: "1/1/2024", activityCount: 15, lastActive: "Today", reportingStatus: "Compliant" },
+      { id: "1", name: "Suresh Kumar", mobile: "9876543210", area: "Muzaffarnagar Urban", status: "Active", joinedDate: "1/1/2024", activityCount: 15, lastActive: "Today", reportingStatus: "Compliant" },
       { id: "2", name: "Gurmit Singh", mobile: "9876543211", area: "Kiratpur Sahib", status: "Active", joinedDate: "2/15/2024", activityCount: 8, lastActive: "Yesterday", reportingStatus: "Compliant" }
     ];
   }

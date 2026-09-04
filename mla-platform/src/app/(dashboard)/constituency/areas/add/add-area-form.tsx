@@ -121,7 +121,7 @@ export function AddAreaForm({ constituencyId, managers, pollingStations, wards }
                 <Label htmlFor="name">Area Name <span className="text-red-500">*</span></Label>
                 <Input 
                   id="name" 
-                  placeholder="e.g. Anandpur Sahib North" 
+                  placeholder="e.g. Muzaffarnagar North" 
                   value={formData.name}
                   onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   required

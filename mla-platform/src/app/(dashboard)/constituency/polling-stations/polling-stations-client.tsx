@@ -12,6 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { 
   CalendarDays,
   PlusCircle, 
@@ -219,8 +227,61 @@ export function PollingStationsClient({ metrics }: PollingStationsClientProps) {
           <h3 className="text-lg font-semibold text-foreground">Activity Library</h3>
           <p className="text-muted-foreground">Manage your event templates, checklists, and SOPs.</p>
         </TabsContent>
-
       </Tabs>
+
+      {/* STATIONS TABLE */}
+      <Card className="glass-card mt-6">
+        <CardHeader className="pb-2">
+          <CardTitle>Polling Stations Directory</CardTitle>
+          <CardDescription>Comprehensive list of polling stations and assigned activities</CardDescription>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>P/S Code/Name</TableHead>
+                <TableHead>Total Votes</TableHead>
+                <TableHead>T/L Name</TableHead>
+                <TableHead>Total Wards</TableHead>
+                <TableHead>Volunteers</TableHead>
+                <TableHead>Activities (R/C/P)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {initialStations?.map((station) => (
+                <TableRow key={station.id} className="hover:bg-muted/50 cursor-pointer">
+                  <TableCell>
+                    <div>
+                      <p className="font-medium">{station.name}</p>
+                      <p className="text-xs text-muted-foreground font-mono">PS-{station.number}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>{station.voterCount.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <span className={station.teamLeader === "Unassigned" ? "text-muted-foreground italic" : "font-medium"}>
+                      {station.teamLeader}
+                    </span>
+                  </TableCell>
+                  <TableCell>{station.totalWards}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold">{station.volunteersCount} Volunteers</span>
+                      <span className="text-xs text-muted-foreground truncate max-w-[150px]" title={station.volunteerNames}>{station.volunteerNames}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1.5 text-sm">
+                      <span className="text-blue-500 font-medium" title="Running">{station.activitiesCount?.running || 0}</span> / 
+                      <span className="text-emerald-500 font-medium" title="Completed">{station.activitiesCount?.completed || 0}</span> / 
+                      <span className="text-amber-500 font-medium" title="Pending">{station.activitiesCount?.pending || 0}</span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

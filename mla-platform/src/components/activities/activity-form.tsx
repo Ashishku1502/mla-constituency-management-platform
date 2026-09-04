@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 const activitySchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   category: z.string().min(1, "Category is required"),
+  areaId: z.string().min(1, "Target Area is required"),
   description: z.string().optional(),
   objective: z.string().optional(),
   date: z.string().min(1, "Date is required"),
@@ -37,7 +38,7 @@ type ActivityFormValues = z.infer<typeof activitySchema>;
 const CATEGORIES = ["Survey", "Meeting", "Verification", "Event", "Audit"];
 const STATUSES = ["Draft", "Scheduled", "In Progress"];
 
-export function ActivityForm() {
+export function ActivityForm({ areas = [] }: { areas?: { id: string; name: string }[] }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,6 +59,7 @@ export function ActivityForm() {
 
   const categoryValue = useWatch({ name: "category", control });
   const statusValue = useWatch({ name: "status", control });
+  const areaValue = useWatch({ name: "areaId", control });
 
   const onSubmit = async (data: ActivityFormValues) => {
     setIsSubmitting(true);
@@ -114,6 +116,19 @@ export function ActivityForm() {
                 </SelectContent>
               </Select>
               {errors.category && <p className="text-xs text-red-500">{errors.category.message}</p>}
+            </div>
+
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="areaId">Target Area <span className="text-red-500">*</span></Label>
+              <Select value={areaValue} onValueChange={(val) => setValue("areaId", val as string, { shouldValidate: true })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select target area" />
+                </SelectTrigger>
+                <SelectContent>
+                  {areas.map(area => <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              {errors.areaId && <p className="text-xs text-red-500">{errors.areaId.message}</p>}
             </div>
 
             <div className="space-y-2">

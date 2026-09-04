@@ -18,7 +18,7 @@ export default async function VolunteersPage() {
     });
   } catch (error) {
     volunteers = [
-      { id: "1", user: { name: "Amrit Pal", mobile: "9654123456", email: "amrit@example.com", status: "Active" }, area: { name: "Anandpur Sahib Urban" }, pollingStation: { name: "PS 1" }, householdsCount: 42 },
+      { id: "1", user: { name: "Vikram Singh", mobile: "9654123456", email: "amrit@example.com", status: "Active" }, area: { name: "Muzaffarnagar Urban" }, pollingStation: { name: "PS 1" }, householdsCount: 42 },
       { id: "2", user: { name: "Sandeep Singh", mobile: "9654123457", email: "sandeep@example.com", status: "Active" }, area: { name: "Kiratpur Sahib" }, pollingStation: { name: "PS 3" }, householdsCount: 35 }
     ];
   }

@@ -27,7 +27,7 @@ export default async function TeamLeadersPage() {
     });
   } catch (error) {
     teamLeaders = [
-      { id: "1", user: { name: "Balwinder Singh", mobile: "9876543212", email: "balwinder@example.com", status: "Active" }, area: { name: "Anandpur Sahib Urban" }, pollingStations: "PS 1, PS 2" },
+      { id: "1", user: { name: "Amit Kumar", mobile: "9876543212", email: "balwinder@example.com", status: "Active" }, area: { name: "Muzaffarnagar Urban" }, pollingStations: "PS 1, PS 2" },
       { id: "2", user: { name: "Harpreet Kaur", mobile: "9876543213", email: "harpreet@example.com", status: "Active" }, area: { name: "Kiratpur Sahib" }, pollingStations: "PS 3, PS 4" }
     ];
   }

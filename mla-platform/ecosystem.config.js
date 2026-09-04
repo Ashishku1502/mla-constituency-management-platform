@@ -5,8 +5,7 @@ module.exports = {
   apps: [
     {
       name: "mla-platform",          // App ka naam PM2 dashboard mein
-      script: "npm",                 // Next.js standalone server (cwd mein hi hoga)
-      args: "start",
+      script: "server.js",           // Next.js standalone server
       cwd: "/var/www/mla-platform",  // VPS pe deploy path
       instances: 1,                  // 1 instance (KVM 1 plan ke liye theek hai)
       autorestart: true,             // Crash hone pe auto-restart

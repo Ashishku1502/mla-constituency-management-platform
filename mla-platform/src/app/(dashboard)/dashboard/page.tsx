@@ -62,7 +62,7 @@ const CHART_COLORS = {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-border/60 bg-card/95 backdrop-blur-sm p-3 shadow-xl text-xs">
+      <div className="glass rounded-xl p-3 text-xs">
         <p className="font-semibold text-foreground mb-1.5">{label}</p>
         {payload.map((entry: any) => (
           <div key={entry.name} className="flex items-center gap-2 py-0.5">
@@ -126,13 +126,16 @@ function HeroBanner({ stats }: { stats: any }) {
           {/* Quick stat pills — wrap gracefully on all sizes */}
           <div className="flex flex-wrap gap-2 mt-4">
             {[
-              { icon: Users, label: t("Total Records"), value: stats?.totalRecords?.toLocaleString() ?? "—" },
-              { icon: Home, label: t("Households"), value: stats?.totalHouseholds?.toLocaleString() ?? "—" },
+              { icon: Building2, label: t("Areas"), value: stats?.totalAreas?.toLocaleString() ?? "—" },
+              { icon: MapPin, label: t("Wards"), value: stats?.totalWards?.toLocaleString() ?? "—" },
+              { icon: Vote, label: t("Polling Stations"), value: stats?.totalPollingStations?.toLocaleString() ?? "—" },
+              { icon: Shield, label: t("Team Leaders"), value: stats?.totalTeamLeaders?.toLocaleString() ?? "—" },
               { icon: UserCheck, label: t("Volunteers"), value: stats?.volunteers?.toLocaleString() ?? "—" },
             ].map(({ icon: Icon, label, value }) => (
               <div key={label}
                    className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5
-                              bg-white/10 backdrop-blur-sm border border-white/15
+                              bg-white/10 backdrop-blur-md border border-white/20
+                              shadow-lg shadow-black/5 hover:bg-white/20 transition-colors
                               min-w-0 shrink">
                 <Icon className="h-3.5 w-3.5 shrink-0 text-white/80" />
                 <span className="text-[11px] text-white/70 whitespace-nowrap">{label}</span>
@@ -173,7 +176,7 @@ interface StatCardProps {
 function StatCard({ title, value, icon: Icon, trend, gradient, glowColor, bgLight }: StatCardProps) {
   const isPositive = trend && trend.value >= 0;
   return (
-    <div className={`card-premium group p-5 ${bgLight}`}>
+    <div className={`glass-card group p-5 ${bgLight}`}>
       {/* Gradient shimmer on hover */}
       <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 shimmer" />
 
@@ -227,7 +230,7 @@ function CoverageCard({
 }) {
   const { t } = useTranslation();
   return (
-    <Card className="overflow-hidden border border-border/50 shadow-sm">
+        <Card className="glass-card overflow-hidden">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
@@ -429,7 +432,7 @@ export default function DashboardPage() {
       {/* Charts Row 1 */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Activity Status Donut */}
-        <Card className="overflow-hidden border border-border/50 shadow-sm">
+            <Card className="glass-card overflow-hidden">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-primary/60" />
@@ -472,7 +475,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Area Performance Bar */}
-        <Card className="overflow-hidden border border-border/50 shadow-sm">
+            <Card className="glass-card overflow-hidden">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-2 to-chart-2/60" />
@@ -498,7 +501,7 @@ export default function DashboardPage() {
       {/* Charts Row 2 */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Monthly Activity Trend */}
-        <Card className="overflow-hidden border border-border/50 shadow-sm">
+            <Card className="glass-card overflow-hidden">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-3 to-chart-3/60" />
@@ -537,7 +540,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Issue Resolution Trend */}
-        <Card className="overflow-hidden border border-border/50 shadow-sm">
+            <Card className="glass-card overflow-hidden">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-4 to-chart-4/60" />
@@ -564,7 +567,7 @@ export default function DashboardPage() {
       {/* Bottom Row */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Household Coverage by Area */}
-        <Card className="lg:col-span-1 overflow-hidden border border-border/50 shadow-sm">
+        <Card className="lg:col-span-1 glass-card overflow-hidden">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-gradient-to-b from-primary to-chart-2" />
@@ -578,7 +581,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Volunteer Activity */}
-        <Card className="lg:col-span-2 overflow-hidden border border-border/50 shadow-sm">
+        <Card className="lg:col-span-2 glass-card overflow-hidden">
           <CardHeader className="pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-gradient-to-b from-chart-3 to-chart-5" />
