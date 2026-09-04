@@ -1,126 +1,40 @@
-name: 🚀 Deploy to Hostinger VPS
+name: Deploy to Hostinger VPS
 
 on:
   push:
     branches:
-      - main  # main branch pe push hone pe auto-deploy
+      - main
 
 jobs:
   deploy:
-    name: Build & Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-
-      - name: 🟢 Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: mla-platform/package-lock.json
-
-      - name: 📦 Install Dependencies
-        working-directory: mla-platform
-        run: npm ci
-
-      - name: 🏗️ Build Next.js App
-        working-directory: mla-platform
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXTAUTH_URL }}
-          NODE_ENV: production
-        run: npm run build
-
-      - name: 📦 Prepare Deployment Package
-        run: |
-          mkdir -p deploy_package
-          # Copy standalone build
-          cp -r mla-platform/.next/standalone/. deploy_package/
-          # Copy static assets into the right place
-          mkdir -p deploy_package/.next/static
-          cp -r mla-platform/.next/static/. deploy_package/.next/static/
-          # Copy public folder
-          cp -r mla-platform/public deploy_package/public
-          # Copy PM2 config
-          cp mla-platform/ecosystem.config.js deploy_package/
-          # Copy prisma schema and seed script for migrations/seeding
-          mkdir -p deploy_package/prisma
-          cp mla-platform/prisma/schema.prisma deploy_package/prisma/
-          cp mla-platform/prisma/seed.ts deploy_package/prisma/ 2>/dev/null || true
-          echo "📦 Package contents:"
-          ls -la deploy_package/
-
-      - name: 📤 Upload to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 22
-          source: "deploy_package"
-          target: "/tmp/"
-
-      - name: 🔄 Deploy & Restart App on VPS
+      - name: Deploy Application via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 22
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.HOST_SSH_KEY }}
           script: |
-            set -e
-
-            echo "🚀 Starting deployment..."
-
-            # Backup current app (for quick rollback)
-            if [ -d "/var/www/mla-platform/server.js" ]; then
-              sudo cp /var/www/mla-platform/server.js /tmp/server.js.bak 2>/dev/null || true
-            fi
-
-            # Ensure target directory exists
-            sudo mkdir -p /var/www/mla-platform
-            sudo chown -R $USER:$USER /var/www/mla-platform
-
-            # Deploy new files (preserving .env.production)
-            rsync -av --delete \
-              --exclude='.env.production' \
-              --exclude='logs/' \
-              /tmp/deploy_package/ /var/www/mla-platform/
-
-            # Ensure logs directory exists
-            mkdir -p /var/www/mla-platform/logs
-
-            # Load env and run prisma migration
+            # Navigate to the application directory (update this if your path is different)
             cd /var/www/mla-platform
             
-            # We do NOT run npm install @prisma/client here because it breaks the Next.js standalone node_modules!
-            # The standalone build already includes the correct Prisma engine.
+            # Load Node.js into the SSH session
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             
-            if [ -f ".env.production" ]; then
-              set -a
-              . .env.production
-              set +a
-              echo "✅ Loaded .env.production"
-              npx prisma db push --skip-generate 2>/dev/null && echo "✅ DB migration done" || echo "⚠️ DB push skipped"
-            else
-              echo "⚠️ .env.production not found — skipping DB migration"
-            fi
-
-            # PM2 restart or start
-            if pm2 list | grep -q "mla-platform"; then
-              pm2 restart mla-platform --update-env
-              echo "✅ PM2 restarted"
-            else
-              pm2 start ecosystem.config.js
-              echo "✅ PM2 started"
-            fi
-            pm2 save
-
-            # Cleanup temp files
-            sudo rm -rf /tmp/deploy_package
-
-            echo "🎉 Deployment complete! App running at port 3000"
+            # Pull the latest changes from GitHub
+            git pull origin main
+            
+            # Install dependencies
+            npm install
+            
+            # Generate Prisma Client
+            npx prisma generate
+            
+            # Build the Next.js application
+            npm run build
+            
+            # Restart the PM2 process
+            pm2 restart mla-platform

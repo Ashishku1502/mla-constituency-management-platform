@@ -80,7 +80,17 @@ export function AreasClient({ initialAreas, managers }: { initialAreas: AreaData
           },
           icon: Plus,
         }}
-      />
+      >
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-1.5"
+          onClick={() => router.push("/activities/create-bulk")}
+        >
+          <Plus className="h-4 w-4" />
+          Create Activity
+        </Button>
+      </PageHeader>
 
       {/* Summary Cards */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
