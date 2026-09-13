@@ -3,6 +3,8 @@ import { CreateBulkClient } from "./create-bulk-client";
 
 const prisma = new PrismaClient();
 
+export const dynamic = "force-dynamic";
+
 export default async function CreateBulkActivityPage() {
   // Fetch all areas with their polling stations
   const areas = await prisma.area.findMany({

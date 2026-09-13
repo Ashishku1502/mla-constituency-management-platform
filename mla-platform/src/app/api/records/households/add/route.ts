@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 
@@ -57,14 +57,15 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error creating household:", error);
 
+    const err = error as any;
     // Handle Prisma specific unique constraint errors or foreign key errors
-    if (error.code === 'P2002') {
+    if (err.code === 'P2002') {
        return NextResponse.json(
          { success: false, error: "A household with this information already exists." },
          { status: 409 }
        );
     }
-    if (error.code === 'P2003') {
+    if (err.code === 'P2003') {
        return NextResponse.json(
          { success: false, error: "Referenced record (like Polling Station or Ward) does not exist." },
          { status: 400 }

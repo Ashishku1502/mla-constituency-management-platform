@@ -59,12 +59,22 @@ export function IssueForm({ areas }: { areas: { id: string; name: string; code: 
   const onSubmit = async (data: IssueFormValues) => {
     setIsSubmitting(true);
     try {
+      const formData = new FormData();
+      formData.append("category", data.category);
+      formData.append("priority", data.priority);
+      formData.append("areaId", data.areaId);
+      formData.append("description", data.description);
+      formData.append("dateReported", data.dateReported);
+
+      // @ts-ignore - grabbing the file from the form event using standard DOM api since react-hook-form file inputs can be tricky
+      const fileInput = document.getElementById('image') as HTMLInputElement;
+      if (fileInput && fileInput.files && fileInput.files.length > 0) {
+        formData.append("image", fileInput.files[0]);
+      }
+
       const response = await fetch("/api/issues/add", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        body: formData, // fetch will automatically set the correct multipart/form-data boundary
       });
 
       const result = await response.json();
@@ -143,6 +153,12 @@ export function IssueForm({ areas }: { areas: { id: string; name: string; code: 
               <Label htmlFor="dateReported">Date Reported <span className="text-red-500">*</span></Label>
               <Input id="dateReported" type="date" {...register("dateReported")} />
               {errors.dateReported && <p className="text-xs text-red-500">{errors.dateReported.message}</p>}
+            </div>
+
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="image">Attach Photo (Optional)</Label>
+              <Input id="image" type="file" accept="image/*" />
+              <p className="text-xs text-muted-foreground">Upload a photo to help the team identify the issue.</p>
             </div>
 
             <div className="space-y-2 sm:col-span-2">

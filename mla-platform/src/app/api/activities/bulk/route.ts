@@ -23,6 +23,8 @@ export async function POST(req: Request) {
           select: { id: true, name: true, teamLeaderId: true }
         });
 
+        if (!pollingStation) continue; // Skip if invalid PS ID
+
         // Create the activity for this specific Area + PS + Date
         const activity = await prisma.activity.create({
           data: {

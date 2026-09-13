@@ -156,7 +156,7 @@ export function ActivitiesClient({ activities, pollingStations = [] }: { activit
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>{t("Target Polling Station")}</Label>
-              <Select value={selectedPS} onValueChange={setSelectedPS}>
+              <Select value={selectedPS} onValueChange={(val) => setSelectedPS(val || "")}>
                 <SelectTrigger>
                   <SelectValue placeholder={t("Select a Polling Station")} />
                 </SelectTrigger>

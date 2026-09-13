@@ -137,7 +137,7 @@ export function AssignmentsClient({ assignments, unassignedActivities, volunteer
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Target Ward</Label>
-              <Select value={selectedWard} onValueChange={setSelectedWard}>
+              <Select value={selectedWard} onValueChange={(val) => setSelectedWard(val || "")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a Ward" />
                 </SelectTrigger>
@@ -152,7 +152,7 @@ export function AssignmentsClient({ assignments, unassignedActivities, volunteer
             </div>
             <div className="space-y-2">
               <Label>Assign to Volunteer</Label>
-              <Select value={selectedVolunteer} onValueChange={setSelectedVolunteer}>
+              <Select value={selectedVolunteer} onValueChange={(val) => setSelectedVolunteer(val || "")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a Volunteer" />
                 </SelectTrigger>

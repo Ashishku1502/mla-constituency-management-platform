@@ -37,10 +37,10 @@ const mockDataProxy = {
                     { id: "mock-am-1", userId: "1", user: { name: "Suresh Kumar", mobile: "9876543210", status: "Active", joinedDate: new Date() }, area: { name: "Muzaffarnagar" } }
                   ];
                   if (prop === 'teamLeader') return [
-                    { id: "mock-tl-1", userId: "2", user: { name: "Amit Kumar", mobile: "9876543211", status: "Active", joinedDate: new Date(), email: "balwinder@example.com" }, area: { name: "Muzaffarnagar" }, pollingStations: "PS 1, PS 2" }
+                    { id: "mock-tl-1", userId: "2", user: { name: "Amit Kumar", mobile: "9876543211", status: "Active", joinedDate: new Date(), email: "brijesh@example.com" }, area: { name: "Muzaffarnagar" }, pollingStations: "PS 1, PS 2" }
                   ];
                   if (prop === 'volunteer') return [
-                    { id: "mock-vol-1", userId: "3", user: { name: "Vikram Singh", mobile: "9876543212", status: "Active", joinedDate: new Date(), email: "amrit@example.com" }, area: { name: "Muzaffarnagar" }, pollingStation: { name: "PS 1" }, householdsCount: 20 }
+                    { id: "mock-vol-1", userId: "3", user: { name: "Vikram Sharma", mobile: "9876543212", status: "Active", joinedDate: new Date(), email: "amrit@example.com" }, area: { name: "Muzaffarnagar" }, pollingStation: { name: "PS 1" }, householdsCount: 20 }
                   ];
                   if (prop === 'area') return [
                     { id: "mock-area-1", name: "Muzaffarnagar", code: "AC-01", population: 50000, status: "Active", householdCoverage: 80, _count: { pollingStations: 10 } }
@@ -61,8 +61,8 @@ const mockDataProxy = {
                 }
                 
                 if (operation === 'findFirst' || operation === 'findUnique') {
-                  if (prop === 'constituency') return { name: "Muzaffarnagar", state: "Punjab", code: "AC-042", population: 215000, totalAreas: 8, totalPollingStations: 142 };
-                  if (prop === 'user') return { name: "S. Harpreet Singh", role: "Candidate", status: "Active", email: "candidate@example.com", mobile: "9888888888", joinedDate: new Date() };
+                  if (prop === 'constituency') return { name: "Muzaffarnagar", state: "Uttar Pradesh", code: "AC-042", population: 215000, totalAreas: 8, totalPollingStations: 142 };
+                  if (prop === 'user') return { name: "Rajesh Kumar", role: "Candidate", status: "Active", email: "candidate@example.com", mobile: "9888888888", joinedDate: new Date() };
                   return null;
                 }
                 

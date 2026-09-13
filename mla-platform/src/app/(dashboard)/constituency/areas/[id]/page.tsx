@@ -64,6 +64,8 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ id:
       teamLeaderId: ps.teamLeaderId,
       volunteerCount: ps.volunteers.length,
       volunteerNames: ps.volunteers.slice(0, 2).map((v) => v.user.name),
+      totalWards: 0,
+      activitiesCount: { running: 0, completed: 0, pending: 0 },
     }));
 
     const areaData = {
@@ -109,11 +111,11 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ id:
       totalWards: 18,
       activitiesCount: { running: 2, completed: 5, pending: 1 },
       pollingStations: [
-        { id: "ps-1", number: 1, name: "PS-1 Central Hall", address: "Main Bazaar", voterCount: 850, recordCount: 820, status: "Validated", teamLeader: "Amit Kumar", teamLeaderId: "tl-1", volunteerCount: 2, volunteerNames: ["Ravi", "Sunita"] },
-        { id: "ps-2", number: 2, name: "PS-2 School Block", address: "School Road", voterCount: 720, recordCount: 700, status: "Validated", teamLeader: "Priya Sharma", teamLeaderId: "tl-2", volunteerCount: 2, volunteerNames: ["Mohan", "Geeta"] },
-        { id: "ps-3", number: 3, name: "PS-3 Community Center", address: "Temple Lane", voterCount: 680, recordCount: 650, status: "Pending", teamLeader: "Unassigned", teamLeaderId: null, volunteerCount: 0, volunteerNames: [] },
-        { id: "ps-4", number: 4, name: "PS-4 Panchayat Bhawan", address: "Market Road", voterCount: 910, recordCount: 880, status: "Validated", teamLeader: "Deepak Singh", teamLeaderId: "tl-3", volunteerCount: 2, volunteerNames: ["Kavya", "Arun"] },
-        { id: "ps-5", number: 5, name: "PS-5 Old Town Hall", address: "Station Road", voterCount: 790, recordCount: 760, status: "Pending", teamLeader: "Unassigned", teamLeaderId: null, volunteerCount: 1, volunteerNames: ["Sita"] },
+        { id: "ps-1", number: 1, name: "PS-1 Central Hall", address: "Main Bazaar", voterCount: 850, recordCount: 820, totalWards: 3, activitiesCount: { running: 1, completed: 2, pending: 0 }, status: "Validated", teamLeader: "Amit Kumar", teamLeaderId: "tl-1", volunteerCount: 2, volunteerNames: ["Ravi", "Sunita"] },
+        { id: "ps-2", number: 2, name: "PS-2 School Block", address: "School Road", voterCount: 720, recordCount: 700, totalWards: 4, activitiesCount: { running: 0, completed: 1, pending: 1 }, status: "Validated", teamLeader: "Priya Sharma", teamLeaderId: "tl-2", volunteerCount: 2, volunteerNames: ["Mohan", "Geeta"] },
+        { id: "ps-3", number: 3, name: "PS-3 Community Center", address: "Temple Lane", voterCount: 680, recordCount: 650, totalWards: 2, activitiesCount: { running: 0, completed: 0, pending: 0 }, status: "Pending", teamLeader: "Unassigned", teamLeaderId: null, volunteerCount: 0, volunteerNames: [] },
+        { id: "ps-4", number: 4, name: "PS-4 Panchayat Bhawan", address: "Market Road", voterCount: 910, recordCount: 880, totalWards: 5, activitiesCount: { running: 1, completed: 1, pending: 0 }, status: "Validated", teamLeader: "Deepak Singh", teamLeaderId: "tl-3", volunteerCount: 2, volunteerNames: ["Kavya", "Arun"] },
+        { id: "ps-5", number: 5, name: "PS-5 Old Town Hall", address: "Station Road", voterCount: 790, recordCount: 760, totalWards: 4, activitiesCount: { running: 0, completed: 1, pending: 0 }, status: "Pending", teamLeader: "Unassigned", teamLeaderId: null, volunteerCount: 1, volunteerNames: ["Sita"] },
       ],
     };
 

@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 
 const mockReports = [
   { id: "rep-001", title: "Ward 1 Survey Summary", date: "2024-08-15", author: "Suresh Kumar", completion: "98%", status: "Approved" },
-  { id: "rep-002", title: "Nangal Township Audit", date: "2024-08-18", author: "Harpreet Gill", completion: "92%", status: "Pending" },
-  { id: "rep-003", title: "Water Infrastructure Meet", date: "2024-08-20", author: "Gurpreet Kaur", completion: "100%", status: "Approved" },
+  { id: "rep-002", title: "Budhana Audit", date: "2024-08-18", author: "Harish Goel", completion: "92%", status: "Pending" },
+  { id: "rep-003", title: "Water Infrastructure Meet", date: "2024-08-20", author: "Geeta Devi", completion: "100%", status: "Approved" },
 ];
 
 export default function ActivityReportsPage() {

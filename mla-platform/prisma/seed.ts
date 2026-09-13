@@ -44,7 +44,7 @@ async function main() {
 
   const candidateUser = await prisma.user.create({
     data: {
-      name: "S. Harpreet Singh",
+      name: "Rajesh Kumar",
       email: "candidate@constituencyos.org",
       mobile: "9888888888",
       passwordHash,
@@ -55,7 +55,7 @@ async function main() {
 
   const managerUser = await prisma.user.create({
     data: {
-      name: "Rajinder Singh",
+      name: "Rajendra Singh",
       email: "rajinder@constituencyos.org",
       mobile: "98765xxxxx",
       passwordHash,
@@ -66,7 +66,7 @@ async function main() {
 
   const leaderUser = await prisma.user.create({
     data: {
-      name: "Balwinder Singh",
+      name: "Brijesh Kumar",
       email: "balwinder@constituencyos.org",
       mobile: "97651xxxxx",
       passwordHash,
@@ -90,8 +90,8 @@ async function main() {
   console.log("Creating constituency...");
   const constituency = await prisma.constituency.create({
     data: {
-      name: "Anandpur Sahib",
-      state: "Punjab",
+      name: "Muzaffarnagar",
+      state: "Uttar Pradesh",
       code: "AC-042",
       population: 215000,
       totalAreas: 8,
@@ -103,9 +103,9 @@ async function main() {
   // 4. Areas
   console.log("Creating constituency areas...");
   const areasData = [
-    { name: "Anandpur Sahib Urban", code: "ASU-01", population: 42000, status: "Active", householdCoverage: 78 },
-    { name: "Kiratpur Sahib", code: "KS-02", population: 38000, status: "Active", householdCoverage: 65 },
-    { name: "Nangal Township", code: "NT-03", population: 35000, status: "Active", householdCoverage: 72 },
+    { name: "Muzaffarnagar Urban", code: "ASU-01", population: 42000, status: "Active", householdCoverage: 78 },
+    { name: "Khatauli", code: "KS-02", population: 38000, status: "Active", householdCoverage: 65 },
+    { name: "Budhana", code: "NT-03", population: 35000, status: "Active", householdCoverage: 72 },
     { name: "Bhakra Dam Area", code: "BD-04", population: 22000, status: "Active", householdCoverage: 58 },
     { name: "Balachaur", code: "BL-05", population: 28000, status: "Active", householdCoverage: 62 },
     { name: "Ganguwal", code: "GW-06", population: 18000, status: "Active", householdCoverage: 55 },
@@ -128,7 +128,7 @@ async function main() {
   await prisma.areaManager.create({
     data: {
       userId: managerUser.id,
-      areaId: areas["Anandpur Sahib Urban"].id,
+      areaId: areas["Muzaffarnagar Urban"].id,
     },
   });
 
@@ -136,7 +136,7 @@ async function main() {
   const teamLeader = await prisma.teamLeader.create({
     data: {
       userId: leaderUser.id,
-      areaId: areas["Anandpur Sahib Urban"].id,
+      areaId: areas["Muzaffarnagar Urban"].id,
       pollingStations: "PS 1, PS 2",
     },
   });
@@ -146,7 +146,7 @@ async function main() {
     data: {
       name: "Ward 1",
       type: "Ward",
-      areaId: areas["Anandpur Sahib Urban"].id,
+      areaId: areas["Muzaffarnagar Urban"].id,
       population: 7500,
       households: 1850,
     },
@@ -157,8 +157,8 @@ async function main() {
     data: {
       number: 1,
       name: "Government Senior Secondary School",
-      address: "Main Road, Anandpur Sahib",
-      areaId: areas["Anandpur Sahib Urban"].id,
+      address: "Main Road, Muzaffarnagar",
+      areaId: areas["Muzaffarnagar Urban"].id,
       teamLeaderId: teamLeader.id,
       recordCount: 520,
       status: "Validated",
@@ -169,8 +169,8 @@ async function main() {
     data: {
       number: 2,
       name: "Primary School Hall",
-      address: "Station Road, Anandpur Sahib",
-      areaId: areas["Anandpur Sahib Urban"].id,
+      address: "Station Road, Muzaffarnagar",
+      areaId: areas["Muzaffarnagar Urban"].id,
       teamLeaderId: teamLeader.id,
       recordCount: 485,
       status: "Validated",
@@ -181,7 +181,7 @@ async function main() {
   const volunteer = await prisma.volunteer.create({
     data: {
       userId: volunteerUser.id,
-      areaId: areas["Anandpur Sahib Urban"].id,
+      areaId: areas["Muzaffarnagar Urban"].id,
       pollingStationId: ps1.id,
       householdsCount: 42,
     },
@@ -191,7 +191,7 @@ async function main() {
   const hh1 = await prisma.household.create({
     data: {
       houseNumber: "H-142",
-      headOfHousehold: "Mohinder Singh",
+      headOfHousehold: "Mahendra Singh",
       contact: "98765xxxxx",
       address: "42, Gandhi Nagar",
       locality: "Gandhi Nagar",
@@ -206,7 +206,7 @@ async function main() {
   // 11. Family Members
   await prisma.familyMember.create({
     data: {
-      name: "Gurpreet Kaur",
+      name: "Geeta Devi",
       age: 48,
       gender: "Female",
       relation: "Wife",
@@ -217,10 +217,10 @@ async function main() {
   // 12. Records
   await prisma.record.create({
     data: {
-      name: "Mohinder Singh",
-      voterId: "PB/06/042/001423",
+      name: "Mahendra Singh",
+      voterId: "UP/06/042/001423",
       mobile: "98765xxxxx",
-      address: "42, Gandhi Nagar, Anandpur Sahib",
+      address: "42, Gandhi Nagar, Muzaffarnagar",
       pollingStationId: ps1.id,
       householdId: hh1.id,
       validationStatus: "Validated",
@@ -238,7 +238,7 @@ async function main() {
       startTime: "09:00",
       endTime: "17:00",
       location: "Ward 1, Gandhi Nagar",
-      areaId: areas["Anandpur Sahib Urban"].id,
+      areaId: areas["Muzaffarnagar Urban"].id,
       pollingStationId: ps1.id,
       teamLeaderId: teamLeader.id,
       volunteersCount: 1,
@@ -276,7 +276,7 @@ async function main() {
   await prisma.issue.create({
     data: {
       reportedById: volunteerUser.id,
-      areaId: areas["Anandpur Sahib Urban"].id,
+      areaId: areas["Muzaffarnagar Urban"].id,
       pollingStationId: ps1.id,
       category: "Water",
       description: "Low water pressure in Gandhi Nagar during morning hours",

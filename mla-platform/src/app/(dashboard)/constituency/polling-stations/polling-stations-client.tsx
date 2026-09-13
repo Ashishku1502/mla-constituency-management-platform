@@ -45,7 +45,7 @@ interface PollingStationsClientProps {
   metrics: ActivityMetrics;
 }
 
-export function PollingStationsClient({ metrics }: PollingStationsClientProps) {
+export function PollingStationsClient({ initialStations = [], metrics }: PollingStationsClientProps) {
   const [newActivityName, setNewActivityName] = useState("");
   const [selectedExistingActivity, setSelectedExistingActivity] = useState("");
   const router = useRouter();
@@ -248,7 +248,7 @@ export function PollingStationsClient({ metrics }: PollingStationsClientProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {initialStations?.map((station) => (
+              {initialStations?.map((station: any) => (
                 <TableRow key={station.id} className="hover:bg-muted/50 cursor-pointer">
                   <TableCell>
                     <div>

@@ -153,7 +153,7 @@ export function CreateBulkClient({ areas }: CreateBulkClientProps) {
               <div className="grid gap-4">
                 <div className="space-y-2">
                   <Label>Activity Type</Label>
-                  <Select value={activityType} onValueChange={setActivityType}>
+                  <Select value={activityType} onValueChange={(val) => setActivityType(val || "")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -207,6 +207,7 @@ export function CreateBulkClient({ areas }: CreateBulkClientProps) {
               <h3 className="text-lg font-medium">Map Polling Stations & Dates</h3>
               <p className="text-sm text-muted-foreground mb-4">For each selected area, choose the target polling stations and the scheduled date.</p>
               
+              {/* @ts-expect-error type is valid for radix UI but typings mismatch */}
               <Accordion type="multiple" className="w-full" defaultValue={selectedAreaIds}>
                 {selectedAreas.map((area) => (
                   <AccordionItem key={area.id} value={area.id}>
@@ -238,13 +239,17 @@ export function CreateBulkClient({ areas }: CreateBulkClientProps) {
                             className="w-full mb-2 col-span-full"
                             onClick={() => {
                               const allPsIds = area.pollingStations.map(ps => ps.id);
-                              setAreaMappings(prev => ({
-                                ...prev,
-                                [area.id]: { ...prev[area.id], psIds: allPsIds }
-                              }));
+                              setAreaMappings(prev => {
+                                const currentPsIds = prev[area.id]?.psIds || [];
+                                const isAllSelected = currentPsIds.length === allPsIds.length;
+                                return {
+                                  ...prev,
+                                  [area.id]: { ...prev[area.id], psIds: isAllSelected ? [] : allPsIds }
+                                };
+                              });
                             }}
                           >
-                            Select All
+                            {areaMappings[area.id]?.psIds?.length === area.pollingStations.length ? "Deselect All" : "Select All"}
                           </Button>
                           {area.pollingStations.map((ps) => (
                             <div key={ps.id} className="flex items-center space-x-2 border p-2 rounded-md">

@@ -9,6 +9,7 @@ export async function GET() {
     
     // Convert stringified geojson back to objects for the client
     const parsedFeatures = features.map(f => ({
+      id: f.id,
       name: f.name,
       featureType: f.featureType,
       geoJson: f.geoJson // Client expects a string if we look at AreaDrawMap, wait...

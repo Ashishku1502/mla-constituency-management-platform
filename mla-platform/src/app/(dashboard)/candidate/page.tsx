@@ -22,10 +22,10 @@ export default async function CandidateProfilePage() {
   const defaultCandidate = {
     name: "Rajesh Sharma",
     designation: "Senior Party Leader & Candidate",
-    email: "amarinder.s@constituencyos.org",
+    email: "rajesh.k@constituencyos.org",
     phone: "+91 98765 43210",
-    biography: "Rajesh Sharma is a dedicated public servant and community leader with over 15 years of experience in regional governance. Born and raised in the heart of the constituency, he has championed numerous development projects focusing on rural infrastructure, clean water access, and educational reforms. Known for his grassroots approach, Amarinder has consistently worked towards uniting diverse community factions and bridging the gap between local citizens and state resources.",
-    photoUrl: "https://ui-avatars.com/api/?name=Amarinder+Singh&size=256&background=0D8ABC&color=fff",
+    biography: "Rajesh Sharma is a dedicated public servant and community leader with over 15 years of experience in regional governance. Born and raised in the heart of the constituency, he has championed numerous development projects focusing on rural infrastructure, clean water access, and educational reforms. Known for his grassroots approach, Rajesh has consistently worked towards uniting diverse community factions and bridging the gap between local citizens and state resources.",
+    photoUrl: "https://ui-avatars.com/api/?name=Rajesh+Kumar&size=256&background=0D8ABC&color=fff",
     education: null,
     experience: null,
     publicProfile: null,
@@ -164,7 +164,7 @@ export default async function CandidateProfilePage() {
                   <div className="relative">
                     <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background"></div>
                     <h4 className="font-semibold text-sm">Masters in Public Administration</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">Punjab University • 2008 - 2010</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Chaudhary Charan Singh University • 2008 - 2010</p>
                   </div>
                   <div className="relative">
                     <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-muted bg-background"></div>

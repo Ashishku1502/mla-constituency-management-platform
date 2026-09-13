@@ -88,6 +88,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
         <TableHeader>
           <TableRow>
             <TableHead>{t("Category")}</TableHead>
+            <TableHead>{t("Photo")}</TableHead>
             <TableHead>{t("Description")}</TableHead>
             <TableHead>{t("Reported By")}</TableHead>
             <TableHead>{t("Area")}</TableHead>
@@ -101,7 +102,7 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
         <TableBody>
           {issues.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
+              <TableCell colSpan={10} className="text-center py-12 text-muted-foreground">
                 <div className="flex flex-col items-center justify-center space-y-4">
                   <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-2xl border-2 border-white/5 glow-emerald">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -118,6 +119,16 @@ export function IssuesClient({ issues, teamMembers }: { issues: any[]; teamMembe
             issues.map((issue) => (
               <TableRow key={issue.id} className="cursor-pointer hover:bg-muted/50">
                 <TableCell className="font-medium">{issue.category}</TableCell>
+                <TableCell>
+                  {issue.imageUrl ? (
+                    <a href={issue.imageUrl} target="_blank" rel="noopener noreferrer">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={issue.imageUrl} alt="Issue photo" className="w-10 h-10 object-cover rounded-md border" />
+                    </a>
+                  ) : (
+                    <span className="text-muted-foreground text-xs italic">N/A</span>
+                  )}
+                </TableCell>
                 <TableCell>
                   <p className="text-sm line-clamp-2 max-w-xs" title={issue.description}>
                     {issue.description}

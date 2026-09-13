@@ -6,14 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { PageHeader } from "@/components/shared/page-header";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   Building2,
   Users,
@@ -28,6 +21,7 @@ import {
   Clock,
   PlayCircle,
   Home,
+  Edit,
 } from "lucide-react";
 
 interface PSData {
@@ -42,6 +36,12 @@ interface PSData {
   teamLeaderId: string | null;
   volunteerCount: number;
   volunteerNames: string[];
+  totalWards: number;
+  activitiesCount: {
+    running: number;
+    completed: number;
+    pending: number;
+  };
 }
 
 interface AreaData {
@@ -84,6 +84,11 @@ export function AreaDetailClient({ area }: { area: AreaData }) {
           title={area.name}
           description={`Area Code: ${area.code} • ${area.description || "Constituency Area"}`}
           icon={Building2}
+          action={{
+            label: "Edit Area",
+            onClick: () => router.push(`/constituency/areas/${area.id}/edit`),
+            icon: Edit,
+          }}
         />
       </div>
 
@@ -238,79 +243,94 @@ export function AreaDetailClient({ area }: { area: AreaData }) {
         </Card>
       </div>
 
-      {/* Polling Stations Table — clickable */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Vote className="h-5 w-5 text-indigo-500" />
-            Polling Stations in {area.name}
-            <span className="ml-auto text-xs font-normal text-muted-foreground">Click a row to see details</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>P/S No. / Name</TableHead>
-                <TableHead className="hidden sm:table-cell">Total Votes</TableHead>
-                <TableHead className="hidden md:table-cell">Team Leader</TableHead>
-                <TableHead className="hidden lg:table-cell">Volunteers</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-8"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {area.pollingStations.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
-                    No polling stations found for this area.
-                  </TableCell>
-                </TableRow>
-              )}
-              {area.pollingStations.map((ps) => (
-                <TableRow
-                  key={ps.id}
-                  className="cursor-pointer hover:bg-muted/60 transition-colors group"
-                  onClick={() => router.push(`/constituency/polling-stations/${ps.id}`)}
-                >
-                  <TableCell>
-                    <div>
-                      <p className="font-semibold group-hover:text-primary transition-colors">
-                        P/S-{ps.number}: {ps.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{ps.address}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    {ps.voterCount.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <span className={ps.teamLeaderId ? "font-medium" : "text-muted-foreground italic text-sm"}>
+      {/* Polling Stations Cards Grid */}
+      <div className="mb-4 mt-6 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Vote className="h-5 w-5 text-indigo-500" />
+          Polling Stations in {area.name}
+        </h3>
+      </div>
+      
+      {area.pollingStations.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+            <Vote className="h-12 w-12 mb-4 opacity-20" />
+            <p>No polling stations found for this area.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {area.pollingStations.map((ps) => (
+            <Card 
+              key={ps.id}
+              className="cursor-pointer hover:shadow-md transition-all hover:border-primary/50 group flex flex-col h-full"
+              onClick={() => router.push(`/constituency/polling-stations/${ps.id}`)}
+            >
+              <CardContent className="p-5 flex flex-col flex-1">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-1" title={ps.name}>
+                      P/S-{ps.number}: {ps.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate" title={ps.address}>{ps.address}</p>
+                  </div>
+                  <StatusBadge status={ps.status} />
+                </div>
+
+                {/* Team Leader */}
+                <div className="flex items-center gap-2 mb-4 p-2.5 rounded-md bg-muted/50 border border-muted">
+                  <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-bold shrink-0 dark:bg-indigo-900/30 dark:text-indigo-400">
+                    {ps.teamLeader !== "Unassigned" ? ps.teamLeader.charAt(0) : "?"}
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Team Leader</p>
+                    <p className={`text-sm truncate ${ps.teamLeader === "Unassigned" ? "text-muted-foreground italic" : "font-medium"}`}>
                       {ps.teamLeader}
-                    </span>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-medium">{ps.volunteerCount}</span>
-                      {ps.volunteerNames.length > 0 && (
-                        <span className="text-xs text-muted-foreground">
-                          ({ps.volunteerNames.join(", ")}{ps.volunteerCount > 2 ? "..." : ""})
-                        </span>
-                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3 mb-5 mt-auto">
+                  <div className="flex flex-col bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-md border border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
+                      <Home className="h-3.5 w-3.5 text-amber-500" />
+                      <span className="text-xs">Total Wards</span>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={ps.status} />
-                  </TableCell>
-                  <TableCell>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                    <span className="font-bold text-xl leading-none">{ps.totalWards}</span>
+                  </div>
+                  <div className="flex flex-col bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-md border border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
+                      <Users className="h-3.5 w-3.5 text-emerald-500" />
+                      <span className="text-xs">Volunteers</span>
+                    </div>
+                    <span className="font-bold text-xl leading-none">{ps.volunteerCount}</span>
+                  </div>
+                </div>
+
+                {/* Activities */}
+                <div className="mb-2">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Activities (Running / Done / Pending)</p>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex gap-1 items-center bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 px-2 py-1 rounded-md flex-1 justify-center border border-emerald-100 dark:border-emerald-900/50">
+                      <span className="font-bold">{ps.activitiesCount.running}</span>
+                    </div>
+                    <span className="text-muted-foreground/30 px-1">/</span>
+                    <div className="flex gap-1 items-center bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 px-2 py-1 rounded-md flex-1 justify-center border border-blue-100 dark:border-blue-900/50">
+                      <span className="font-bold">{ps.activitiesCount.completed}</span>
+                    </div>
+                    <span className="text-muted-foreground/30 px-1">/</span>
+                    <div className="flex gap-1 items-center bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 px-2 py-1 rounded-md flex-1 justify-center border border-amber-100 dark:border-amber-900/50">
+                      <span className="font-bold">{ps.activitiesCount.pending}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

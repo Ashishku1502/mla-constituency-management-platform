@@ -9,7 +9,7 @@ import { ShieldAlert, Users, Database, ShieldCheck, Activity, Award } from "luci
 const mockLogs = [
   { id: "log-1", user: "Admin", action: "User Creation", date: "2024-08-20", time: "11:32 AM", details: "Created user 'Suresh Kumar' with Role 'Area Manager'" },
   { id: "log-2", user: "Admin", action: "Import Records", date: "2024-08-20", time: "10:15 AM", details: "Imported 12,430 household listings" },
-  { id: "log-3", user: "Admin", action: "Permission Change", date: "2024-08-19", time: "04:45 PM", details: "Assigned Nangal Township Area mapping to 'Harpreet Gill'" },
+  { id: "log-3", user: "Admin", action: "Permission Change", date: "2024-08-19", time: "04:45 PM", details: "Assigned Budhana Area mapping to 'Harish Goel'" },
 ];
 
 export default function AdminPanelPage() {

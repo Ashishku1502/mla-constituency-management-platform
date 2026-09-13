@@ -101,7 +101,7 @@ export function FamilyMemberForm({ households }: FamilyMemberFormProps) {
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name <span className="text-red-500">*</span></Label>
-              <Input id="name" placeholder="e.g. Gurpreet Singh" {...register("name")} />
+              <Input id="name" placeholder="e.g. Rajesh Kumar" {...register("name")} />
               {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
             </div>
 

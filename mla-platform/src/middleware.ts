@@ -23,5 +23,5 @@ export default NextAuth(authConfig).auth((req) => {
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.png|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|csv|docx?|xlsx?|zip|webmanifest)$).*)"],
 };

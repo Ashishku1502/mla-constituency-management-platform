@@ -7,6 +7,8 @@ export const metadata = {
   description: "Schedule a new activity, event, or survey",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AddActivityPage() {
   const dbAreas = await prisma.area.findMany({
     select: { id: true, name: true },

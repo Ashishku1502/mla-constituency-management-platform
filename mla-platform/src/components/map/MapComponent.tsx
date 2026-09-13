@@ -31,9 +31,10 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { mapCenter } from "@/lib/mock-geo-data";
-import { Search, MapPin, Building2, Home } from "lucide-react";
+import { Search, MapPin, Building2, Home, Map } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 // Fix missing marker icons in React Leaflet
 const iconRetinaUrl = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png";
@@ -129,7 +130,7 @@ export default function MapComponent() {
   const onEdited = (e: any) => toast.info("Feature edited locally.");
   const onDeleted = (e: any) => toast.info("Feature removed locally.");
 
-  if (loading) return <Skeleton className="w-full h-full rounded-md" />;
+  if (loading) return <Skeleton className="w-full h-full rounded-2xl" />;
 
   const parseFeature = (type: string) => {
     if (!Array.isArray(features)) return null;
@@ -182,66 +183,95 @@ export default function MapComponent() {
   const filteredItems = sidebarItems();
 
   return (
-    <div className="flex flex-col md:flex-row h-full w-full bg-background relative z-0">
-      {/* Interactive Sidebar */}
-      <div className="w-full md:w-80 flex flex-col border-r bg-card shadow-sm z-10 shrink-0">
-        <div className="p-4 border-b space-y-4 bg-muted/20">
-          <h3 className="font-semibold text-lg flex items-center gap-2 tracking-tight">
-            <MapPin className="h-5 w-5 text-primary" />
-            Locations
-          </h3>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+    <div className="flex flex-col md:flex-row h-full w-full bg-background relative z-0 rounded-xl overflow-hidden">
+      
+      {/* Floating Interactive Sidebar */}
+      <div className="absolute top-4 left-4 bottom-4 w-[340px] hidden md:flex flex-col z-[1000] rounded-2xl shadow-2xl border border-white/20 bg-background/85 backdrop-blur-xl overflow-hidden transition-all duration-300">
+        
+        {/* Header */}
+        <div className="p-5 border-b border-border/40 bg-gradient-to-br from-primary/10 to-transparent">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-inner">
+              <Map className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg leading-tight tracking-tight text-foreground">
+                Constituency Map
+              </h3>
+              <p className="text-xs text-muted-foreground font-medium">Explore locations & boundaries</p>
+            </div>
+          </div>
+          
+          <div className="relative group">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
               placeholder="Search wards, villages, stations..."
-              className="pl-9 bg-background shadow-sm border-muted-foreground/20 focus-visible:ring-primary"
+              className="pl-10 h-10 bg-background/60 backdrop-blur border-border/50 focus-visible:ring-primary focus-visible:border-primary shadow-inner rounded-xl transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
+
+        {/* Scrollable List */}
         <ScrollArea className="flex-1">
-          <div className="p-3 space-y-1.5">
+          <div className="p-4 space-y-2">
             {filteredItems.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary/10 hover:shadow-sm cursor-pointer transition-all duration-200 group border border-transparent hover:border-primary/20"
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/10 hover:shadow-sm cursor-pointer transition-all duration-300 group border border-transparent hover:border-primary/20 bg-card/40"
                 onClick={() => handleLocationClick(item)}
               >
-                <div className={`p-2 rounded-md transition-colors ${
-                  item.type === "Ward" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 group-hover:bg-green-200 dark:group-hover:bg-green-900/50" :
-                  item.type === "Village" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50" :
-                  item.type === "Locality" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50" :
-                  item.type === "Division" ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400 group-hover:bg-cyan-200 dark:group-hover:bg-cyan-900/50" :
-                  "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50"
+                <div className={`p-2.5 rounded-lg shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3 ${
+                  item.type === "Ward" ? "bg-green-500/15 text-green-600 dark:text-green-400" :
+                  item.type === "Village" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                  item.type === "Locality" ? "bg-purple-500/15 text-purple-600 dark:text-purple-400" :
+                  item.type === "Division" ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400" :
+                  "bg-blue-500/15 text-blue-600 dark:text-blue-400"
                 }`}>
                   {item.type === "Ward" ? <Building2 className="h-4 w-4" /> : item.type === "Village" ? <Home className="h-4 w-4" /> : <MapPin className="h-4 w-4" />}
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">{item.name}</p>
-                  <p className="text-xs text-muted-foreground font-medium">{item.type}</p>
+                  <p className="text-sm font-bold truncate text-foreground group-hover:text-primary transition-colors">{item.name}</p>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-0.5">{item.type}</p>
                 </div>
               </div>
             ))}
             {filteredItems.length === 0 && (
-              <div className="p-8 text-center flex flex-col items-center justify-center space-y-3">
-                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-                  <Search className="h-5 w-5 text-muted-foreground" />
+              <div className="p-10 text-center flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                <div className="h-16 w-16 rounded-full bg-muted/50 flex items-center justify-center border border-border/50 shadow-inner">
+                  <Search className="h-6 w-6 text-muted-foreground/60" />
                 </div>
-                <p className="text-sm text-muted-foreground font-medium">No locations found</p>
+                <p className="text-sm text-muted-foreground font-medium">No matching locations found.</p>
               </div>
             )}
           </div>
         </ScrollArea>
       </div>
+      
+      {/* Mobile Sidebar Fallback */}
+      <div className="w-full md:hidden flex flex-col border-b bg-card shadow-sm z-10 shrink-0">
+         <div className="p-4 border-b space-y-4 bg-muted/20">
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search locations..."
+              className="pl-9"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Map Container */}
-      <div className="flex-1 relative z-0">
+      <div className="flex-1 relative z-0 h-full w-full">
         <MapContainer
           center={mapCenter}
           zoom={11}
           style={{ height: "100%", width: "100%", zIndex: 0 }}
           className="bg-muted/10"
+          zoomControl={false}
         >
           <MapController target={flyTarget} />
           
@@ -316,10 +346,10 @@ export default function MapComponent() {
                     });
                     if (feature.properties && feature.properties.name) {
                       layer.bindPopup(
-                        `<div class="font-sans">
-                          <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
-                          <p class="text-sm text-muted-foreground m-0 mt-1">Ward Area</p>
-                          ${feature.properties.population ? `<div class="mt-2 text-xs bg-muted p-1.5 rounded-md inline-block">Pop: <b>${feature.properties.population}</b></div>` : ''}
+                        `<div class="font-sans px-2 py-1">
+                          <p class="font-bold text-lg m-0 text-foreground">${feature.properties.name}</p>
+                          <p class="text-xs text-muted-foreground uppercase tracking-wider m-0 mt-1 font-semibold">Ward Area</p>
+                          ${feature.properties.population ? `<div class="mt-3 text-sm bg-primary/10 text-primary px-3 py-1.5 rounded-lg inline-block border border-primary/20">Population: <b>${feature.properties.population}</b></div>` : ''}
                         </div>`,
                         { className: "custom-popup" }
                       );
@@ -352,10 +382,10 @@ export default function MapComponent() {
                     });
                     if (feature.properties && feature.properties.name) {
                       layer.bindPopup(
-                        `<div class="font-sans">
-                          <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
-                          <p class="text-sm text-muted-foreground m-0 mt-1">Village</p>
-                          ${feature.properties.population ? `<div class="mt-2 text-xs bg-muted p-1.5 rounded-md inline-block">Pop: <b>${feature.properties.population}</b></div>` : ''}
+                        `<div class="font-sans px-2 py-1">
+                          <p class="font-bold text-lg m-0 text-foreground">${feature.properties.name}</p>
+                          <p class="text-xs text-muted-foreground uppercase tracking-wider m-0 mt-1 font-semibold">Village</p>
+                          ${feature.properties.population ? `<div class="mt-3 text-sm bg-primary/10 text-primary px-3 py-1.5 rounded-lg inline-block border border-primary/20">Population: <b>${feature.properties.population}</b></div>` : ''}
                         </div>`,
                         { className: "custom-popup" }
                       );
@@ -375,12 +405,12 @@ export default function MapComponent() {
                   onEachFeature={(feature, layer) => {
                     if (feature.properties && feature.properties.name) {
                       layer.bindPopup(
-                        `<div class="font-sans">
+                        `<div class="font-sans px-2 py-1">
                           <div class="flex items-center gap-2 mb-1">
-                            <span class="inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
-                            <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
+                            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
+                            <p class="font-bold text-lg m-0 text-foreground">${feature.properties.name}</p>
                           </div>
-                          <p class="text-sm text-muted-foreground m-0">${feature.properties.address || 'Polling Station'}</p>
+                          <p class="text-sm text-muted-foreground m-0 mt-1">${feature.properties.address || 'Polling Station'}</p>
                         </div>`,
                         { className: "custom-popup" }
                       );
@@ -399,17 +429,17 @@ export default function MapComponent() {
                       radius: 8,
                       fillColor: "#8b5cf6",
                       color: "#fff",
-                      weight: 1,
+                      weight: 2,
                       opacity: 1,
-                      fillOpacity: 0.8
+                      fillOpacity: 0.9
                     });
                   }}
                   onEachFeature={(feature, layer) => {
                     if (feature.properties && feature.properties.name) {
                       layer.bindPopup(
-                        `<div class="font-sans">
-                          <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
-                          <p class="text-sm text-muted-foreground m-0 mt-1">Locality</p>
+                        `<div class="font-sans px-2 py-1">
+                          <p class="font-bold text-lg m-0 text-foreground">${feature.properties.name}</p>
+                          <p class="text-xs text-muted-foreground uppercase tracking-wider m-0 mt-1 font-semibold">Locality</p>
                         </div>`,
                         { className: "custom-popup" }
                       );
@@ -443,9 +473,9 @@ export default function MapComponent() {
                     });
                     if (feature.properties && feature.properties.name) {
                       layer.bindPopup(
-                        `<div class="font-sans">
-                          <p class="font-bold text-base m-0 text-foreground">${feature.properties.name}</p>
-                          <p class="text-sm text-muted-foreground m-0 mt-1">Geographical Division</p>
+                        `<div class="font-sans px-2 py-1">
+                          <p class="font-bold text-lg m-0 text-foreground">${feature.properties.name}</p>
+                          <p class="text-xs text-muted-foreground uppercase tracking-wider m-0 mt-1 font-semibold">Geographical Division</p>
                         </div>`,
                         { className: "custom-popup" }
                       );

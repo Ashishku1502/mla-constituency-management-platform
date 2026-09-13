@@ -36,18 +36,26 @@ export default function LandingPage() {
       {/* Navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl transition-all">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center group cursor-pointer">
-            <div className="bg-white/95 px-3 py-1.5 rounded-xl shadow-lg shadow-white/5 transition-all duration-300 hover:scale-105 border border-white/20">
+          <Link href="/" className="flex items-center group">
+            <div className="bg-white px-3 py-1.5 rounded-xl shadow-lg shadow-white/5 transition-all duration-300 group-hover:scale-105 border border-white/20 flex items-center gap-3">
               <Image 
                 src="/pmp-logo.png" 
                 alt="PMP Consultancy Logo" 
-                width={110} 
-                height={40} 
-                className="object-contain h-10 w-auto"
+                width={120} 
+                height={120} 
+                className="object-contain h-9 w-9 rounded"
                 priority
               />
+              <div className="flex flex-col text-left">
+                <span className="text-base font-extrabold tracking-tight text-slate-950 leading-tight">
+                  PMP Consultancy
+                </span>
+                <span className="text-[9px] font-bold tracking-wider uppercase text-blue-700 leading-none mt-0.5">
+                  Political Management Program
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
@@ -306,15 +314,23 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="md:col-span-2">
-              <div className="mb-6 inline-block bg-white/95 px-4 py-2 rounded-xl shadow-lg border border-white/20">
+              <Link href="/" className="mb-6 inline-flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl shadow-lg border border-white/20 transition-all duration-300 hover:scale-105">
                 <Image 
                   src="/pmp-logo.png" 
                   alt="PMP Consultancy Logo" 
                   width={140} 
-                  height={50} 
-                  className="object-contain h-12 w-auto"
+                  height={140} 
+                  className="object-contain h-11 w-11 rounded"
                 />
-              </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-lg font-extrabold tracking-tight text-slate-950 leading-tight">
+                    PMP Consultancy
+                  </span>
+                  <span className="text-[10px] font-bold tracking-wider uppercase text-blue-700 leading-none mt-0.5">
+                    Political Management Program
+                  </span>
+                </div>
+              </Link>
               <p className="text-slate-400 max-w-md leading-relaxed">
                 The ultimate operating system for modern political campaigns and constituency management. Built for leaders who demand scale and precision.
               </p>

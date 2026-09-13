@@ -110,7 +110,7 @@ export function AreaDivisionClient() {
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <Select onValueChange={(val) => val && handleAllocate(ward.id, val)}>
+                  <Select onValueChange={(val) => val && handleAllocate(ward.id, val as string)}>
                     <SelectTrigger className="h-8 text-xs">
                       <SelectValue placeholder="Assign to Area..." />
                     </SelectTrigger>

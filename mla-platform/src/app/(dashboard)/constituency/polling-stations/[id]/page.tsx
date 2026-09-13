@@ -38,7 +38,26 @@ export default async function PollingStationDetailPage({
           },
         },
         activities: {
-          select: { id: true, name: true, status: true, wardId: true, deadline: true },
+          select: { 
+            id: true, 
+            name: true, 
+            category: true,
+            status: true, 
+            wardId: true, 
+            deadline: true,
+            date: true,
+            startTime: true,
+            endTime: true,
+            location: true,
+            volunteersCount: true,
+            assignments: {
+              include: {
+                volunteer: {
+                  include: { user: { select: { name: true } } }
+                }
+              }
+            }
+          },
           orderBy: { createdAt: "desc" },
         },
       },
@@ -56,9 +75,12 @@ export default async function PollingStationDetailPage({
       orderBy: { name: "asc" },
     });
 
-    const runningAct = ps.activities.filter((a) => a.status === "In Progress").length;
-    const completedAct = ps.activities.filter((a) => a.status === "Completed").length;
-    const pendingAct = ps.activities.filter((a) =>
+    const generalActivitiesList = ps.activities.filter(a => !['Meeting', 'Event'].includes(a.category));
+    const meetingsList = ps.activities.filter(a => ['Meeting', 'Event'].includes(a.category));
+
+    const runningAct = generalActivitiesList.filter((a) => a.status === "In Progress").length;
+    const completedAct = generalActivitiesList.filter((a) => a.status === "Completed").length;
+    const pendingAct = generalActivitiesList.filter((a) =>
       ["Pending", "Draft", "Scheduled"].includes(a.status)
     ).length;
 
@@ -100,6 +122,26 @@ export default async function PollingStationDetailPage({
           progress: a.status === "Completed" ? 100 : a.status === "In Progress" ? 50 : 0,
         })),
         volunteers: ps.volunteers.slice(0, 2).map((v) => v.user.name),
+      })),
+      allActivities: generalActivitiesList.map(a => ({
+        id: a.id,
+        name: a.name,
+        category: a.category,
+        status: a.status,
+        date: a.date,
+        wardId: a.wardId,
+        wardName: wards.find(w => w.id === a.wardId)?.name ?? null,
+      })),
+      allMeetings: meetingsList.map(a => ({
+        id: a.id,
+        title: a.name,
+        category: a.category,
+        status: a.status,
+        date: a.date,
+        time: `${a.startTime || ""} - ${a.endTime || ""}`,
+        location: a.location,
+        attendeesCount: a.assignments.length,
+        attendeeNames: a.assignments.map(ass => ass.volunteer.user.name),
       })),
     };
 
@@ -185,6 +227,16 @@ export default async function PollingStationDetailPage({
           ],
           volunteers: [],
         },
+      ],
+      allActivities: [
+        { id: "act-1", name: "Door-to-door Survey", category: "Survey", status: "In Progress", date: "2026-09-06", wardId: "w-1", wardName: "Ward-1 (Main Bazaar)" },
+        { id: "act-2", name: "Voter Verification", category: "Verification", status: "Completed", date: "2026-09-04", wardId: "w-1", wardName: "Ward-1 (Main Bazaar)" },
+        { id: "act-3", name: "Canvassing", category: "Survey", status: "Pending", date: "2026-09-10", wardId: "w-2", wardName: "Ward-2 (Temple Lane)" },
+      ],
+      allMeetings: [
+        { id: "mtg-1", title: "Youth Meeting", category: "Meeting", status: "In Progress", date: "2026-09-05", time: "10:00 AM - 12:00 PM", location: "Community Hall", attendeesCount: 2, attendeeNames: ["Ravi Sharma", "Sunita Devi"] },
+        { id: "mtg-2", title: "Local Rally", category: "Event", status: "Completed", date: "2026-09-01", time: "04:00 PM - 06:00 PM", location: "Main Square", attendeesCount: 1, attendeeNames: ["Sunita Devi"] },
+        { id: "mtg-3", title: "Women's Meeting", category: "Meeting", status: "Pending", date: "2026-09-12", time: "11:00 AM - 01:00 PM", location: "School Campus", attendeesCount: 0, attendeeNames: [] },
       ],
     };
 

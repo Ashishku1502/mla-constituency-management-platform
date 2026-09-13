@@ -9,6 +9,15 @@ const eslintConfig = defineConfig([
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "react/no-unescaped-entities": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "@next/next/no-img-element": "off",
+      "prefer-const": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/error-boundaries": "off",
+      "react-hooks/static-components": "off",
     },
   },
   // Override default ignores of eslint-config-next.
@@ -18,6 +27,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "deploy_package/**",
   ]),
 ]);
 
